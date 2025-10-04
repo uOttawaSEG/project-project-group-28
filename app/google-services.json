@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "872596436527",
+    "project_id": "csi2105-project",
+    "storage_bucket": "csi2105-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872596436527:android:a88ca1d32a84fac33df8da",
+        "android_client_info": {
+          "package_name": "csi2105.group28.otams"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASeMNBk1qS4xgrjuOo0TxuxyZE8f_99Fs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
