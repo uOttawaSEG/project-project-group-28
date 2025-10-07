@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void onStart() {
         super.onStart();
+
         otamsroot.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     childrenlist.add(children.getKey());             // checks the of the initial database
                 }
                 if (childrenlist.isEmpty()) {
-                    User admin = new User("Administrator", "admin@mail.com", "Admin001");
+                    User admin = new User("Administrator", "admin", "me","admin@mail.com", "Admin001", "100020653");
                     otamsroot.child("Administrator").child("admin@mail@com").child("info").setValue(admin);
                     otamsroot.child("Administrator").child("admin@mail@com").child("password").setValue("Admin001");
                     otamsroot.child("Users").child("Student").push().setValue("");
