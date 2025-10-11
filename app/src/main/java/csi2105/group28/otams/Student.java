@@ -52,7 +52,7 @@ public class Student extends User {
 
     /**
      * Method to add a course to the list of courses offered.
-     * @param course is the course to be added
+     * @param course is the course to be added to the list of courses
      */
     public void addCourse(String course) {
         this.coursesOffered.add(course);
