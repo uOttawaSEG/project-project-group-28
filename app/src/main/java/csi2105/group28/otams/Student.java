@@ -17,13 +17,8 @@ public class Student extends User {
      * @param programOfStudy is the program of study for the student
      * @param coursesOffered is a list of courses offered by the student
      */
-    public Student(String firstName, String lastName, String email, String password, String phoneNum, String programOfStudy, ArrayList<String> coursesOffered) {
-        super("Student", firstName, lastName, email, password, phoneNum);
-        this.programOfStudy = programOfStudy;
-        this.coursesOffered = coursesOffered;
-    }
 
-    /*
+    /**
      * Getter for the program of study.
      * @return the program of study of the student
      */
@@ -31,7 +26,7 @@ public class Student extends User {
         return programOfStudy;
     }
 
-    /*
+    /**
      * Setter for the program of study.
      * @param programOfStudy is the new program of study for the student
      */
@@ -39,7 +34,7 @@ public class Student extends User {
         this.programOfStudy = programOfStudy;
     }
 
-    /*
+    /**
      * Getter for the courses offered.
      * @return the list of courses offered by the student
      */
@@ -47,7 +42,7 @@ public class Student extends User {
         return coursesOffered;
     }
 
-    /*
+    /**
      * Setter for the courses offered.
      * @param coursesOffered is the new list of courses offered by the student
      */
@@ -55,9 +50,9 @@ public class Student extends User {
         this.coursesOffered = coursesOffered;
     }
 
-    /*
+    /**
      * Method to add a course to the list of courses offered.
-     * @param course is the course to be added
+     * @param course is the course to be added to the list of courses
      */
     public void addCourse(String course) {
         this.coursesOffered.add(course);
