@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,6 +29,10 @@ public class SigningUp extends AppCompatActivity {
     Spinner utype;
     EditText emailGet, passwordGet;
     TextView majorError;
+    // Layouts for conditional visibility
+    LinearLayout degreeLayoutSU, coursesLayoutSU;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,37 @@ public class SigningUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+// Tutor only layout visibility
+        // 1. Initialize layouts
+        degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
+        coursesLayoutSU = findViewById(R.id.coursesLayoutSU);
+
+        // 2. Setup spinner
+        utype = findViewById(R.id.typeSU);
+
+
+        utype.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                String selectedUser = parent.getItemAtPosition(position).toString();
+
+                if (selectedUser.equals("Tutor")) {
+                    degreeLayoutSU.setVisibility(View.VISIBLE);
+                    coursesLayoutSU.setVisibility(View.VISIBLE);
+                } else {
+                    degreeLayoutSU.setVisibility(View.GONE);
+                    coursesLayoutSU.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
+
+
 
         //set the reference of the firebase to the users(where students and tutor info are stored)
         rootref = FirebaseDatabase.getInstance().getReference("otams/Users");
