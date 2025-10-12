@@ -20,8 +20,7 @@
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.634"
-        />
+        app:layout_constraintVertical_bias="0.634" />
 
     <!-- testing-->
     <!-- First Name Layout -->
@@ -157,7 +156,7 @@
     </LinearLayout>
 
 
-<!-- TUTOR ONLY
+    <!-- TUTOR ONLY
     <!- Courses Offered Layout (Tutor only) -->
     <LinearLayout
         android:id="@+id/coursesLayoutSU"
@@ -193,63 +192,38 @@
     </LinearLayout>
 
     <!-- Highest Degree Layout (Tutor only) -->
+
+
     <LinearLayout
         android:id="@+id/degreeLayoutSU"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/phoneLayoutSU"
+        android:layout_width="391dp"
+        android:layout_height="74dp"
+
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/errorMsgSU"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/programLayoutSU"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/degreeTSU"
             android:layout_width="130dp"
-            android:layout_height="match_parent"
+            android:layout_height="61dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/highest_degree1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
             android:gravity="center_vertical"
-            android:text="@string/highest_degree"
-            android:textStyle="bold" />
-
+             android:textStyle="bold"    />
         <EditText
             android:id="@+id/degreeGSU"
-            android:layout_width="260dp"
-            android:layout_height="match_parent"
-            android:hint="@string/enter_highest_degree"
+            android:layout_width="262dp"
+            android:layout_height="68dp"
+            android:hint="@string/enter_highest_degree1"
             android:inputType="text" />
     </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <LinearLayout
         android:id="@+id/userLayoutSU"
@@ -263,26 +237,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.101">
 
-    <TextView
-        android:id="@+id/emailTSU"
-        android:layout_width="130dp"
-        android:layout_height="match_parent"
-        android:fontFamily="sans-serif"
-        android:gravity="center_horizontal|center_vertical"
-        android:text="@string/email"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#020202"
-        android:textStyle="bold"
-        android:typeface="normal" />
+        <TextView
+            android:id="@+id/emailTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/email"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold"
+            android:typeface="normal" />
 
-    <EditText
-        android:id="@+id/emailGSU"
-        android:layout_width="260dp"
-        android:layout_height="match_parent"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:hint="@string/eguide"
-        android:textStyle="italic" />
+        <EditText
+            android:id="@+id/emailGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/eguide"
+            android:inputType="textEmailAddress"
+            android:textStyle="italic" />
     </LinearLayout>
 
     <LinearLayout
@@ -297,25 +271,25 @@
         app:layout_constraintTop_toBottomOf="@+id/userLayoutSU"
         app:layout_constraintVertical_bias="0.012">
 
-    <TextView
-        android:id="@+id/passTSU"
-        android:layout_width="130dp"
-        android:layout_height="match_parent"
-        android:fontFamily="sans-serif"
-        android:gravity="center_horizontal|center_vertical"
-        android:text="@string/password"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#020202"
-        android:textStyle="bold"
-        android:typeface="normal" />
+        <TextView
+            android:id="@+id/passTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/password"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold"
+            android:typeface="normal" />
 
-    <EditText
-        android:id="@+id/passGSU"
-        android:layout_width="260dp"
-        android:layout_height="match_parent"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        <EditText
+            android:id="@+id/passGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <Button
