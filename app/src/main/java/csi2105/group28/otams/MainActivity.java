@@ -180,8 +180,15 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(tref);
                 if(storedpassword==null){
                     uname.setError("User does not exist");                   // returns null when acessing a non-data
-                }else if(storedpassword.equals(password)){
-                    User userdata = snapshot.child("info").getValue(User.class);             //if passwword is right
+                }else if(storedpassword.equals(password)) {
+                    User userdata;
+                    if (userType.equals("Tutor")){
+                        userdata = snapshot.child("info").getValue(Tutor.class);             //if passwword is right
+                    }else if(userType.equals("Student")){
+                        userdata = snapshot.child("info").getValue(Student.class);             //if passwword is right
+                    }else{
+                        userdata = snapshot.child("info").getValue(User.class);
+                    }
                     Intent intent = new Intent(MainActivity.this, SignedIn.class);
                     intent.putExtra("info", userdata);               //go to signed in
                     startActivity(intent);

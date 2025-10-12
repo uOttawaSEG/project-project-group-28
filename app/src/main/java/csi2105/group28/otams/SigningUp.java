@@ -121,7 +121,11 @@ public class SigningUp extends AppCompatActivity {
         User newU = null;    //make a null user
         //will create user if and only if all the prerequisites are met--see user class
         try {
-            newU = new User(usertype, email, password);
+            if(usertype.equals("Tutor")) {
+                newU = new Tutor(usertype, firstname, lastname, email, password, phonenum, prog_deg, cOffered);
+            }else{
+                newU = new Tutor(usertype, firstname, lastname, email, password, phonenum,prog_deg);
+            }
         }catch(IllegalArgumentException e){
             if(e.getMessage().equals("passwordl")){
                 passwordGet.setError("Password needs to be 7 characters long");       // short password
