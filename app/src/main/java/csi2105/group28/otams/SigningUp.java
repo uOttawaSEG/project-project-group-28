@@ -23,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SigningUp extends AppCompatActivity {
 
     DatabaseReference rootref;
@@ -134,7 +137,7 @@ public class SigningUp extends AppCompatActivity {
         //will create user if and only if all the prerequisites are met--see user class
         try {
             if(usertype.equals("Tutor")) {
-                newU = new Tutor( firstname, lastname, email, password, phonenum, highestDegree, null);
+                newU = new Tutor( firstname, lastname, email, password, phonenum, highestDegree, new ArrayList<String>(Arrays.asList(cOffered.split(","))));
             }else{
                 newU = new Student( firstname, lastname, email, password, phonenum, prog_deg);
             }
