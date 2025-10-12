@@ -23,6 +23,234 @@
         app:layout_constraintVertical_bias="0.634"
         />
 
+    <!-- testing-->
+    <!-- First Name Layout -->
+    <LinearLayout
+        android:id="@+id/firstNameLayoutSU"
+        android:layout_width="390dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passLayoutSU"
+        app:layout_constraintVertical_bias="0.012">
+
+        <TextView
+            android:id="@+id/firstNameTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/first_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/firstNameGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/enter_first_name"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <!-- Last Name Layout -->
+    <LinearLayout
+        android:id="@+id/lastNameLayoutSU"
+        android:layout_width="390dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstNameLayoutSU"
+        app:layout_constraintVertical_bias="0.012">
+
+        <TextView
+            android:id="@+id/lastNameTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/last_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/lastNameGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/enter_last_name"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <!-- Phone Number Layout -->
+    <LinearLayout
+        android:id="@+id/phoneLayoutSU"
+        android:layout_width="390dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lastNameLayoutSU"
+        app:layout_constraintVertical_bias="0.012">
+
+        <TextView
+            android:id="@+id/phoneTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/phone_number"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/phoneGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/enter_phone_number"
+            android:inputType="phone" />
+    </LinearLayout>
+
+    <!-- Program of Study Layout (Student only) -->
+    <LinearLayout
+        android:id="@+id/programLayoutSU"
+        android:layout_width="390dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneLayoutSU"
+        app:layout_constraintVertical_bias="0.012">
+
+        <TextView
+            android:id="@+id/programTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/program"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/programGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/enter_program_of_study"
+            android:inputType="text" />
+    </LinearLayout>
+
+
+<!-- TUTOR ONLY
+    <!- Courses Offered Layout (Tutor only) -->
+    <LinearLayout
+        android:id="@+id/coursesLayoutSU"
+        android:layout_width="390dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/degreeLayoutSU"
+        app:layout_constraintVertical_bias="0.012">
+
+        <TextView
+            android:id="@+id/coursesTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/courses_offered"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#020202"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/coursesGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="@string/enter_courses_comma_separated"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <!-- Highest Degree Layout (Tutor only) -->
+    <LinearLayout
+        android:id="@+id/degreeLayoutSU"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/phoneLayoutSU"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/degreeTSU"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/highest_degree"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/degreeGSU"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:hint="@string/enter_highest_degree"
+            android:inputType="text" />
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <LinearLayout
         android:id="@+id/userLayoutSU"
         android:layout_width="390dp"

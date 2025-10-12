@@ -27,7 +27,7 @@ public class SignedIn extends AppCompatActivity {
         thisuser = (User) getIntent().getSerializableExtra("info");
         //Says welcome
         TextView welcome = findViewById(R.id.Welcome);
-        String welcomeMSG = "Welcome! You are signed in as "+thisuser.getUserType();
+        String welcomeMSG = "Welcome " + thisuser.getFirstName() + "! You are signed in as "+thisuser.getUserType();
         welcome.setText(welcomeMSG);
 
         // Test text to see if everything is stored in firebase user class

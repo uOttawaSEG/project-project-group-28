@@ -9,4 +9,16 @@
     <string name="signin">Sign In</string>
     <string name="back">Back</string>
     <string name="exit">Exit</string>
+    <string name="first_name">First Name</string>
+    <string name="enter_first_name">Enter first name</string>
+    <string name="last_name">Last Name</string>
+    <string name="enter_last_name">Enter last name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="program">Program</string>
+    <string name="enter_program_of_study">Enter program of study</string>
+    <string name="courses_offered">Courses Offered</string>
+    <string name="enter_courses_comma_separated">Enter courses (comma separated)</string>
+    <string name="highest_degree" />
+    <string name="enter_highest_degree">enter_highest_degree</string>
 </resources>
