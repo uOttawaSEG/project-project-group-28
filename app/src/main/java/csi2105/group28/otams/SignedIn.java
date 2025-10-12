@@ -27,14 +27,14 @@ public class SignedIn extends AppCompatActivity {
         thisuser = (User) getIntent().getSerializableExtra("info");
         //Says welcome
         TextView welcome = findViewById(R.id.Welcome);
-        String welcomeMSG = "Welcome ! You are signed in as "+thisuser.getUserType();
+        String welcomeMSG = "Welcome "+thisuser.getFirstName()+" "+thisuser.getLastName()+"! You are signed in as "+thisuser.getUserType();
         welcome.setText(welcomeMSG);
 
         // Test text to see if everything is stored in firebase user class
-        TextView data = findViewById(R.id.Data);
-        String dataMSG = "User Type:\t" + thisuser.getUserType() + "\nEmail:\t" + thisuser.getUsername() +
-                "\nUser Password:\t" + thisuser.getPassword() + "\nFirebase Username:\t" + thisuser.getUsername();
-        data.setText(dataMSG);
+      //  TextView data = findViewById(R.id.Data);
+      //  String dataMSG = "User Type:\t" + thisuser.getUserType() + "\nEmail:\t" + thisuser.getUsername() +
+      //          "\nUser Password:\t" + thisuser.getPassword() + "\nFirebase Username:\t" + thisuser.getUsername();
+       // data.setText(dataMSG);
     }
 
     public void onClickBack(View view){
