@@ -4,8 +4,13 @@ public class Student extends User {
 
     private String programOfStudy;
 
-    /*
-     * Constructor for the Student class.
+    // Empty constructor for Firebase or serialization
+    public Student() {
+        super(); // Calls empty constructor of User
+    }
+
+    /**
+     * Regular constructor
      * @param firstName is the first name of the student
      * @param lastName is the last name of the student
      * @param email is the email of the student
@@ -13,6 +18,10 @@ public class Student extends User {
      * @param phoneNum is the phone number of the student
      * @param programOfStudy is the program of study for the student
      */
+    public Student(String firstName, String lastName, String email, String password, String phoneNum, String programOfStudy) {
+        super("Student", firstName, lastName, email, password, phoneNum); // calls User constructor
+        this.programOfStudy = programOfStudy;
+    }
 
     /**
      * Getter for the program of study.
