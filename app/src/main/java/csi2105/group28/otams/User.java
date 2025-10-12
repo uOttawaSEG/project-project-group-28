@@ -195,8 +195,8 @@ public class User implements Serializable {
      */
     private void setPhoneNum(String phoneNum) {
         boolean valid=true;
-        if (phoneNum.length()<10 || phoneNum.length()>14){
-            throw new IllegalArgumentException("PhoneNumber");
+        if (phoneNum.length()<10 || phoneNum.length()>17){
+            throw new IllegalArgumentException("PhoneNum");
         }
         for(int i=0; i<phoneNum.length(); i++){
             if(phoneNum.charAt(i)!='-' && !Character.isDigit(phoneNum.charAt(i))){

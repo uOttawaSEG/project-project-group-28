@@ -77,14 +77,18 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textStyle="bold"
             android:typeface="normal" />
-
-        <EditText
-            android:id="@+id/passG"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="260dp"
             android:layout_height="match_parent"
-            android:ems="10"
-            android:inputType="textPassword"
-            android:hint="Password" />
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/passG"
+                android:layout_width="260dp"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:hint="Password" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <Button

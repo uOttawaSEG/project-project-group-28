@@ -284,13 +284,18 @@
             android:textStyle="bold"
             android:typeface="normal" />
 
-        <EditText
-            android:id="@+id/passGSU"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="260dp"
             android:layout_height="match_parent"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/passGSU"
+                android:layout_width="260dp"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <Button
