@@ -27,7 +27,7 @@ public class SigningUp extends AppCompatActivity {
 
     DatabaseReference rootref;
     Spinner utype;
-    EditText emailGet, passwordGet;
+    EditText emailGet, passwordGet, firstnamedGet, lastnameGet, phonenumGet, programOfStudyGet, highestDegreeGet, coursesOfferedGet;
     TextView majorError;
     // Layouts for conditional visibility
     LinearLayout degreeLayoutSU, coursesLayoutSU;
@@ -89,6 +89,12 @@ public class SigningUp extends AppCompatActivity {
         //initializes all TextEdits and global textviews
         emailGet = findViewById(R.id.emailGSU);
         passwordGet = findViewById(R.id.passGSU);
+        firstnamedGet = findViewById(R.id.firstNameGSU);
+        lastnameGet = findViewById(R.id.lastNameGSU);
+        phonenumGet = findViewById(R.id.phoneGSU);
+        programOfStudyGet = findViewById(R.id.programGSU);
+        highestDegreeGet = findViewById(R.id.degreeGSU);
+        coursesOfferedGet = findViewById(R.id.coursesGSU);
         majorError= findViewById(R.id.errorMsgSU);
 
         //Set a listener that puts a message when password is being typed
@@ -117,14 +123,20 @@ public class SigningUp extends AppCompatActivity {
     public void onClickSignUpSU(View view){
         String email = emailGet.getText().toString().toLowerCase();   //email case does not matter, so always lowercase
         String password = passwordGet.getText().toString();
+        String firstname = firstnamedGet.getText().toString();
+        String lastname = lastnameGet.getText().toString();
+        String prog_deg = programOfStudyGet.getText().toString();
+        String phonenum = phonenumGet.getText().toString();
+        String highestDegree = highestDegreeGet.getText().toString();
+        String cOffered = coursesOfferedGet.getText().toString();
         String usertype = utype.getSelectedItem().toString();
         User newU = null;    //make a null user
         //will create user if and only if all the prerequisites are met--see user class
         try {
             if(usertype.equals("Tutor")) {
-                newU = new Tutor(usertype, firstname, lastname, email, password, phonenum, prog_deg, cOffered);
+                newU = new Tutor( firstname, lastname, email, password, phonenum, highestDegree, null);
             }else{
-                newU = new Tutor(usertype, firstname, lastname, email, password, phonenum,prog_deg);
+                newU = new Student( firstname, lastname, email, password, phonenum, prog_deg);
             }
         }catch(IllegalArgumentException e){
             if(e.getMessage().equals("passwordl")){

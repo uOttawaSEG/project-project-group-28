@@ -12,11 +12,11 @@ In the next sections, we describe the application in detail from the perspective
 
 ### Student
 To become a Student, a user submits a registration request that must be approved by the  Administrator. Once registered, a Student can:
-• View their upcoming sessions.
-• Cancel an existing session (only if it starts in > 60 minutes).
-• View their past sessions.
-• Rate a Tutor following a completed session.
-• Book a session by selecting an available 30‑minute slot for a desired course.
+* View their upcoming sessions.
+* Cancel an existing session (only if it starts in > 60 minutes).
+* View their past sessions.
+* Rate a Tutor following a completed session.
+* Book a session by selecting an available 30‑minute slot for a desired course.
 
 ### Tutor
 To become a Tutor, a user submits a registration request that must be approved by the Administrator. Once registered, a Tutor can:

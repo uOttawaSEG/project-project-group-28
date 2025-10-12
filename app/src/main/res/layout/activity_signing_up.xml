@@ -13,6 +13,7 @@
         android:layout_width="360dp"
         android:layout_height="50dp"
         android:gravity="center_horizontal|center_vertical"
+        android:spinnerMode="dropdown"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/userLayoutSU"
@@ -212,7 +213,7 @@
             android:layout_width="130dp"
             android:layout_height="61dp"
             android:fontFamily="sans-serif"
-            android:text="@string/highest_degree1"
+            android:text="Highest Degree"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#020202"
             android:gravity="center_vertical"
@@ -221,7 +222,7 @@
             android:id="@+id/degreeGSU"
             android:layout_width="262dp"
             android:layout_height="68dp"
-            android:hint="@string/enter_highest_degree1"
+            android:hint="Enter Highest Degree"
             android:inputType="text" />
     </LinearLayout>
 
