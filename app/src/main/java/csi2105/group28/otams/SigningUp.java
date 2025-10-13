@@ -148,8 +148,12 @@ public class SigningUp extends AppCompatActivity {
                 passwordGet.setError("Password needs to have at least a number and a letter"); // no letter and num
             }else if(e.getMessage().equals("email")){
                 emailGet.setError("Email is invalid");//any email error(base)
-            } else if (e.getMessage().equals("PhoneNum")) {  // invalid phone number
-                phonenumGet.setError("Phone number needs to be 10-14 characters");
+            } else if(e.getMessage().equals("FirstName")){
+                firstnamedGet.setError("First name can only contain letters and be 50 characters long");//any email error(base)
+            }else if(e.getMessage().equals("LastName")){
+                lastnameGet.setError("Last name can only contain letters and 50 characters long");//any email error(base)
+            }else if(e.getMessage().equals("PhoneNum")){
+                phonenumGet.setError("Phone number can only contain digits, '', + and -");//any email error(base)
             }
         }
         // only try to send to firebase if everything is ok
