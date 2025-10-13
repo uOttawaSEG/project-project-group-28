@@ -18,8 +18,10 @@ public class Tutor extends User
 {
    private String highestDegree;
    private ArrayList<String> coursesOffered;
-   private List<appointmentSlots> totalappointmentslots; // List of appointments/availability for this tutor (not implemented yet as how we handle slots is not implemented yet)
-   private List<bookedAppointments> sessions; // List of booked appointments for this tutor
+   private List<appointmentSlots> totalappointmentslots; // List of appointments/availability for this tutor (not implemented yet as how we handle slots is not implemented yet).
+    // A relation between Tutor and appointmentSlots is established, as a tutor can have as many Appointment slots as they want. They can even choose not to have any.
+   private List<bookedAppointments> sessions; // List of booked appointments for this tutor.
+    // A relation between Tutor and bookedAppointments is established, as a tutor can have as many booked appointments as they want. They can even choose not to have any.
 
 
     /**
