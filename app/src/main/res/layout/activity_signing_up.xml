@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BB009688"
     tools:context=".SigningUp">
 
     <Spinner
@@ -45,7 +44,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/first_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold" />
 
         <EditText
@@ -78,7 +76,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/last_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold" />
 
         <EditText
@@ -111,7 +108,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/phone_number"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold" />
 
         <EditText
@@ -144,7 +140,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/program"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold" />
 
         <EditText
@@ -180,7 +175,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/courses_offered"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold" />
 
         <EditText
@@ -215,7 +209,6 @@
             android:fontFamily="sans-serif"
             android:text="Highest Degree"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:gravity="center_vertical"
              android:textStyle="bold"    />
         <EditText
@@ -246,7 +239,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/email"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold"
             android:typeface="normal" />
 
@@ -280,7 +272,6 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/password"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#020202"
             android:textStyle="bold"
             android:typeface="normal" />
 
@@ -302,7 +293,6 @@
         android:id="@+id/signUpSU"
         android:layout_width="140dp"
         android:layout_height="70dp"
-        android:backgroundTint="#6E0A2AED"
         android:onClick="onClickSignUpSU"
         android:text="@string/signup"
         android:textAllCaps="true"
@@ -318,7 +308,6 @@
         android:layout_width="140dp"
         android:layout_height="70dp"
         android:layout_marginStart="32dp"
-        android:backgroundTint="#6E0A2AED"
         android:onClick="onClickBackSU"
         android:text="@string/back"
         android:textAllCaps="true"
@@ -335,9 +324,9 @@
         android:text="@string/blank"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="#BD1D1D"
         android:textStyle="bold"
-        android:typeface="monospace"
+        android:typeface="normal"
+        android:textColor="@color/design_default_color_error"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

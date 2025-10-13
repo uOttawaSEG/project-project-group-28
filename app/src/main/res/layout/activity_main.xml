@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BB009688"
     tools:context=".MainActivity">
 
     <Spinner
@@ -96,7 +95,6 @@
         android:layout_width="140dp"
         android:layout_height="70dp"
         android:layout_marginStart="48dp"
-        android:backgroundTint="#6E0A2AED"
         android:onClick="onClickSignIn"
         android:text="@string/signin"
         android:textAllCaps="true"
@@ -112,7 +110,6 @@
         android:layout_width="140dp"
         android:layout_height="70dp"
         android:layout_marginStart="40dp"
-        android:backgroundTint="#6E0A2AED"
         android:onClick="onClickGoSignUp"
         android:text="@string/signup"
         android:textAllCaps="true"
@@ -125,7 +122,6 @@
         android:id="@+id/exitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#EF0505"
         android:onClick="onClickExit"
         android:text="@string/exit"
         app:layout_constraintBottom_toTopOf="@+id/utype"
