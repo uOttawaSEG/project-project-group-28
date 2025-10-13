@@ -26,3 +26,7 @@ To become a Tutor, a user submits a registration request that must be approved b
 * Cancel sessions.
 * Approve or reject session requests.
 The Tutor may also elect to auto‑approve all session requests, so they do not have to act on each one individually. Requests are simply accepted automatically.  Administrator  The Administrator is a pre-registered user (their username and password are seeded in the  database when the system is first launched). The Administrator can approve or reject  registration requests from Students and Tutors
+---
+
+### Contributors
+- Daniella Disonama Phemba
