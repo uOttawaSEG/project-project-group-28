@@ -148,6 +148,8 @@ public class SigningUp extends AppCompatActivity {
                 passwordGet.setError("Password needs to have at least a number and a letter"); // no letter and num
             }else if(e.getMessage().equals("email")){
                 emailGet.setError("Email is invalid");//any email error(base)
+            } else if (e.getMessage().equals("PhoneNum")) {  // invalid phone number
+                phonenumGet.setError("Phone number needs to be 10-14 characters");
             }
         }
         // only try to send to firebase if everything is ok
