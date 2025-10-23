@@ -131,5 +131,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.15" />
 
+    <TextView
+        android:id="@+id/requestMessage"
+        android:layout_width="287dp"
+        android:layout_height="67dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="@string/blank"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textStyle="bold"
+        android:typeface="normal"
+        android:textColor="@color/design_default_color_error"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passLayout"
+        app:layout_constraintVertical_bias="0.242" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,7 +28,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseReference otamsroot;
-    ArrayList<String> childrenlist;
+    ArrayList<String> childrenlist, requests, rejected;
+    boolean hasrequests, hasrejected;
+
 
     private static final String TAG = "MainActivity";
 
@@ -97,6 +99,41 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requests.clear();
+                rejected.clear();
+                for (DataSnapshot children : snapshot.getChildren()) {
+
+                        if (children.getKey().equals("Requests")) {
+                            if (children.hasChildren()) {
+                                hasrequests=true;
+                                for (DataSnapshot req : children.getChildren()) {
+                                    String obj= req.getKey();
+                                    requests.add(obj);
+                                }
+                            }else {
+                                hasrequests=false;
+                            }
+                        }else if (children.getKey().equals("Rejected")) {
+                            if (children.hasChildren()) {
+                                hasrejected=true;
+                                for (DataSnapshot rej: children.getChildren()) {
+                                    String obj= rej.getKey();
+                                    rejected.add(obj);
+                                }
+                            }else {
+                                hasrejected=false;
+                            }
+                        }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
@@ -113,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
         String username = uname.getText().toString().toLowerCase();
         String password =  pass.getText().toString();
         String usertype = utype.getSelectedItem().toString();               //  get all the values
-        boolean valid = false, first=false;
+        boolean valid = false, first=false, found=false;
+        TextView requestmsg= view.findViewById(R.id.requestMessage);
 
         for (int i = 0; i < username.length(); i++) {
             if (username.charAt(i) == '@' && !first) {
@@ -134,12 +172,38 @@ public class MainActivity extends AppCompatActivity {
             valid = false;
         }                              //checks if username is an email
         if (valid) {
-            username = username.replace(".","@");
+            found = adminlist(username, requestmsg);
+            username = username.replace(".", "@");
+            if (!found) {
             getFirebase(usertype, username, password);
+            }
         }else{
             uname.setError("Invalid Email");              // if user does not put an email
         }
 
+    }
+    /*
+     * Checks
+     */
+    public boolean adminlist(String usermail, TextView requestmsg){
+        String username = usermail.replace(".", "@");
+        boolean found=false;
+
+        for(String request: requests){
+            if(request.equals(username)){
+                found=true;
+                String msg = "ACCESS ERROR! "+usermail+" has not been approved by the administrator yet";
+                requestmsg.setText(msg);
+            }
+        }
+        for(String rejects: rejected){
+            if(rejected.equals(username)){
+                found=true;
+                String msg = "ACCESS ERROR! "+usermail+" has been rejected by the administrator";
+                requestmsg.setText(msg);
+            }
+        }
+        return found;
     }
 
     /* closes the main activity/program
