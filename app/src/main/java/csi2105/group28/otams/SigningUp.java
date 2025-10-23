@@ -28,12 +28,14 @@ import java.util.Arrays;
 
 public class SigningUp extends AppCompatActivity {
 
-    DatabaseReference rootref;
+    DatabaseReference otamsroot, rootref;
     Spinner utype;
     EditText emailGet, passwordGet, firstnamedGet, lastnameGet, phonenumGet, programOfStudyGet, highestDegreeGet, coursesOfferedGet;
     TextView majorError;
     // Layouts for conditional visibility
     LinearLayout degreeLayoutSU, coursesLayoutSU;
+    boolean hasrequests, hasrejected;
+    ArrayList<String> requests, rejected;
 
 
 
@@ -80,6 +82,7 @@ public class SigningUp extends AppCompatActivity {
 
 
         //set the reference of the firebase to the users(where students and tutor info are stored)
+        otamsroot = FirebaseDatabase.getInstance().getReference("otams");
         rootref = FirebaseDatabase.getInstance().getReference("otams/Users");
         //initilalizes spinner/selector and sets its values
         utype = findViewById(R.id.typeSU);
@@ -117,6 +120,42 @@ public class SigningUp extends AppCompatActivity {
                 majorError.setText("Password has to have 7 characters, and at least a number and a letter");
             }
         });
+
+        otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requests.clear();
+                rejected.clear();
+                for (DataSnapshot children : snapshot.getChildren()) {
+
+                    if (children.getKey().equals("Requests")) {
+                        if (children.hasChildren()) {
+                            hasrequests=true;
+                            for (DataSnapshot req : children.getChildren()) {
+                                String obj= req.getKey();
+                                requests.add(obj);
+                            }
+                        }else {
+                            hasrequests=false;
+                        }
+                    }else if (children.getKey().equals("Rejected")) {
+                        if (children.hasChildren()) {
+                            hasrejected=true;
+                            for (DataSnapshot rej: children.getChildren()) {
+                                String obj= rej.getKey();
+                                rejected.add(obj);
+                            }
+                        }else {
+                            hasrejected=false;
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     /*
@@ -124,6 +163,8 @@ public class SigningUp extends AppCompatActivity {
      * @param view which is the view on th screen
      */
     public void onClickSignUpSU(View view){
+        boolean found;
+
         String email = emailGet.getText().toString().toLowerCase();   //email case does not matter, so always lowercase
         String password = passwordGet.getText().toString();
         String firstname = firstnamedGet.getText().toString();
@@ -158,7 +199,10 @@ public class SigningUp extends AppCompatActivity {
         }
         // only try to send to firebase if everything is ok
         if (newU!=null) {
-            newUserToFirebase(newU, usertype);
+            found= adminlist(newU.getEmail());
+            if(!found) {
+                newUserToFirebase(newU, usertype);
+            }
         }
     }
 
@@ -188,7 +232,8 @@ public class SigningUp extends AppCompatActivity {
                         }
                     }
                     tref.child(username).child("password").setValue(newUser.getPassword());
-                    tref.child(username).child("info").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
+                    newUser.setPassword(null);
+                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
                     finish();                                                      //ends after sending data to firebase
                 }catch (IllegalArgumentException e) {
                     String error = "Username/email is already taken for " + userT;
@@ -201,5 +246,32 @@ public class SigningUp extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    /*
+     * Checks if the user is has yet to be approved or was rejected by the admin
+     * @param usermail(String) is the email of the user
+     * @param requestmsg(TextView) is the view to show the user a message
+     * @return found(Boolean) that is true if the user yet to be approved or was rejected
+     */
+    public boolean adminlist(String usermail){
+        String username = usermail.replace(".", "@");
+        boolean found=false;
+
+        for(String request: requests){
+            if(request.equals(username)){
+                found=true;
+                String msg = "Username/email is already taken for " + usermail;
+                emailGet.setError(msg);
+            }
+        }
+        for(String rejects: rejected){
+            if(rejected.equals(username)){
+                found=true;
+                String msg = "Username/email is already taken for " + usermail;
+                emailGet.setError(msg);
+            }
+        }
+        return found;
     }
 }

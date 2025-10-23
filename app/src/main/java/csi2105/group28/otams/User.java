@@ -94,25 +94,28 @@ public class User implements Serializable {
      *@param password (String) is the password of the user
      *@throws IllegalArgumentException if the password is <7, amd does not contain a letter and number
      */
-    private void setPassword(String password) {
-
-        if (password.length() < 7) {
-            throw new IllegalArgumentException("passwordl");
-        }
-        boolean letter = false, number = false;
-        for (int i = 0; i < password.length(); i++) {
-            if (!letter && Character.isLetter(password.charAt(i))) {
-                letter = true;
+    public void setPassword(String password) {
+        if(password==null){
+            this.password=null;
+        }else {
+            if (password.length() < 7) {
+                throw new IllegalArgumentException("passwordl");
             }
-            if (!number && Character.isDigit(password.charAt(i))) {
-                number = true;
+            boolean letter = false, number = false;
+            for (int i = 0; i < password.length(); i++) {
+                if (!letter && Character.isLetter(password.charAt(i))) {
+                    letter = true;
+                }
+                if (!number && Character.isDigit(password.charAt(i))) {
+                    number = true;
+                }
             }
-        }
 
-        if (letter & number) {
-            this.password = password;
-        } else {
-            throw new IllegalArgumentException("passwordc");
+            if (letter & number) {
+                this.password = password;
+            } else {
+                throw new IllegalArgumentException("passwordc");
+            }
         }
     }
 

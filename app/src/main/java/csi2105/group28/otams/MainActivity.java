@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         String usertype = utype.getSelectedItem().toString();               //  get all the values
         boolean valid = false, first=false, found=false;
         TextView requestmsg= view.findViewById(R.id.requestMessage);
+        requestmsg.setText("");
 
         for (int i = 0; i < username.length(); i++) {
             if (username.charAt(i) == '@' && !first) {
@@ -183,7 +184,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
     /*
-     * Checks
+     * Checks if the user is has yet to be approved or was rejected by the admin
+     * @param usermail(String) is the email of the user
+     * @param requestmsg(TextView) is the view to show the user a message
+     * @return found(Boolean) that is true if the user yet to be approved or was rejected
      */
     public boolean adminlist(String usermail, TextView requestmsg){
         String username = usermail.replace(".", "@");
@@ -194,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
                 found=true;
                 String msg = "ACCESS ERROR! "+usermail+" has not been approved by the administrator yet";
                 requestmsg.setText(msg);
+                msg = usermail+" has not been approved";
+                uname.setError(msg);
             }
         }
         for(String rejects: rejected){
@@ -201,6 +207,8 @@ public class MainActivity extends AppCompatActivity {
                 found=true;
                 String msg = "ACCESS ERROR! "+usermail+" has been rejected by the administrator";
                 requestmsg.setText(msg);
+                msg = usermail+" has been rejected";
+                uname.setError(msg);
             }
         }
         return found;
