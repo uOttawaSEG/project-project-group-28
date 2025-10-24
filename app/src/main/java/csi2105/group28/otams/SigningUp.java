@@ -49,6 +49,9 @@ public class SigningUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //initializing list for request and rejected users
+        requests = new ArrayList<>();
+        rejected = new ArrayList<>();
 // Tutor only layout visibility
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
@@ -120,7 +123,15 @@ public class SigningUp extends AppCompatActivity {
                 majorError.setText("Password has to have 7 characters, and at least a number and a letter");
             }
         });
+    }
 
+    /*
+     * Starts a firebase value event listener
+     * initiates admins and use/tutor separation if there is nothing in the firebase
+     *
+     */
+    protected void onStart() {
+        super.onStart();
         otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -156,7 +167,9 @@ public class SigningUp extends AppCompatActivity {
 
             }
         });
+
     }
+
 
     /*
      * creates a new user if everything meets requirements
@@ -231,8 +244,7 @@ public class SigningUp extends AppCompatActivity {
                             throw new IllegalArgumentException("Username already exists. Use another email."); //checks if username exist so no overwrite occurs
                         }
                     }
-                    tref.child(username).child("password").setValue(newUser.getPassword());
-                    newUser.setPassword(null);
+                    //tref.child(username).child("password").setValue(newUser.getPassword());
                     otamsroot.child("Administrator").child("admin@mail@com").child("Requests").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
                     finish();                                                      //ends after sending data to firebase
                 }catch (IllegalArgumentException e) {

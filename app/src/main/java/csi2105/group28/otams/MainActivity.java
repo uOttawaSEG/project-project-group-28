@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         //set the reference of the firebase to the otams where everything is stored
         otamsroot = FirebaseDatabase.getInstance().getReference("otams");
         childrenlist = new ArrayList<>();
+        requests = new ArrayList<>();
+        rejected = new ArrayList<>();
         //initilalizes spinner/selector and sets its values
         utype = findViewById(R.id.utype);
         String [] spinnerIt = new String[]{"Administrator","Student","Tutor"};
