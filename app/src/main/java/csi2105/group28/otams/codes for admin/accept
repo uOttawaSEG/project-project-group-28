@@ -62,6 +62,8 @@ protected void onStart() {
                         }
                     }
                 }
+                requestsS.addAll(requestsT);
+                rejectedS.addAll(rejectedT);               // if we are using 1 listm concatenate all into S list
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
