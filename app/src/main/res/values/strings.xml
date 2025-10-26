@@ -21,4 +21,7 @@
     <string name="enter_courses_comma_separated">Enter courses (comma separated)</string>
     <string name="highest_degree" />
     <string name="enter_highest_degree">enter_highest_degree</string>
+    <string name="pending">Pending</string>
+    <string name="approved">Approved</string>
+    <string name="rejected">Rejected</string>
 </resources>
