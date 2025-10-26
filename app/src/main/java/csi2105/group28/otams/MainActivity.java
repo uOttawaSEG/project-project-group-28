@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     EditText uname, pass;
 
+    TextView requestmsg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         //initialize the username and password editText
         uname = findViewById(R.id.unameG);
         pass = findViewById(R.id.passG);
+        requestmsg= findViewById(R.id.requestMessage);
 
 
     }
@@ -173,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
         String password =  pass.getText().toString();
         String usertype = utype.getSelectedItem().toString();               //  get all the values
         boolean valid = false, first=false, found=false;
-        TextView requestmsg= view.findViewById(R.id.requestMessage);
         requestmsg.setText("");
 
         for (int i = 0; i < username.length(); i++) {
