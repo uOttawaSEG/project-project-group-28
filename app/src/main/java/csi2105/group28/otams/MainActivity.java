@@ -27,8 +27,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseReference otamsroot;
-    ArrayList<String> childrenlist, requests, rejected;
-    boolean hasrequests, hasrejected;
+    ArrayList<String> childrenlist, requestsS, rejectedS, requestsT, rejectedT;
 
 
     private static final String TAG = "MainActivity";
@@ -36,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     Spinner utype;
 
     EditText uname, pass;
+
+    TextView requestmsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
         //set the reference of the firebase to the otams where everything is stored
         otamsroot = FirebaseDatabase.getInstance().getReference("otams");
         childrenlist = new ArrayList<>();
-        requests = new ArrayList<>();
-        rejected = new ArrayList<>();
+        requestsS = new ArrayList<>();
+        rejectedS = new ArrayList<>();
+        requestsT = new ArrayList<>();
+        rejectedT = new ArrayList<>();
         //initilalizes spinner/selector and sets its values
         utype = findViewById(R.id.utype);
         String [] spinnerIt = new String[]{"Administrator","Student","Tutor"};
@@ -67,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
         //initialize the username and password editText
         uname = findViewById(R.id.unameG);
         pass = findViewById(R.id.passG);
+<<<<<<< HEAD
+=======
+        requestmsg= findViewById(R.id.requestMessage);
+
+
+>>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
     }
 
     /*
@@ -99,20 +108,44 @@ public class MainActivity extends AppCompatActivity {
         otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requests.clear();
-                rejected.clear();
+                requestsS.clear();
+                rejectedS.clear();
+                requestsT.clear();
+                rejectedT.clear();
                 for (DataSnapshot children : snapshot.getChildren()) {
 
+<<<<<<< HEAD
                     if (children.getKey().equals("Requests")) {
                         if (children.hasChildren()) {
                             hasrequests=true;
                             for (DataSnapshot req : children.getChildren()) {
                                 String obj= req.getKey();
                                 requests.add(obj);
+=======
+                    if (children.getKey().equals("Requests")) { // looking through requests
+                        if (children.hasChildren()) {
+                            for (DataSnapshot req : children.getChildren()) {
+                                if (req.getKey().equals("Tutor")){                   //finding tutors,if they exists and getting their username
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqTutor : req.getChildren()) {
+                                            String obj= reqTutor.getKey();
+                                            requestsT.add(obj);
+                                        }
+                                    }
+                                }else if(req.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqStudent : req.getChildren()) {
+                                            String obj= reqStudent.getKey();
+                                            requestsS.add(obj);
+                                        }
+                                    }
+                                }
+>>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
                             }
                         }else {
                             hasrequests=false;
                         }
+<<<<<<< HEAD
                     }else if (children.getKey().equals("Rejected")) {
                         if (children.hasChildren()) {
                             hasrejected=true;
@@ -122,6 +155,27 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }else {
                             hasrejected=false;
+=======
+                    }else if (children.getKey().equals("Rejected")) {// looking through rejected requests
+                        if (children.hasChildren()) {
+                            for (DataSnapshot rej : children.getChildren()) {
+                                if (rej.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejTutor : rej.getChildren()) {
+                                            String obj= rejTutor.getKey();
+                                            rejectedT.add(obj);
+                                        }
+                                    }
+                                }else if (rej.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejStudent : rej.getChildren()) {
+                                            String obj= rejStudent.getKey();
+                                            rejectedS.add(obj);
+                                        }
+                                    }
+                                }
+                            }
+>>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
                         }
                     }
                 }
@@ -148,7 +202,10 @@ public class MainActivity extends AppCompatActivity {
         String password =  pass.getText().toString();
         String usertype = utype.getSelectedItem().toString();               //  get all the values
         boolean valid = false, first=false, found=false;
+<<<<<<< HEAD
         TextView requestmsg = findViewById(R.id.requestMessage);
+=======
+>>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
         requestmsg.setText("");
 
         for (int i = 0; i < username.length(); i++) {
@@ -170,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             valid = false;
         }                              //checks if username is an email
         if (valid) {
-            found = adminlist(username, requestmsg);
+            found = adminlist(username,usertype);
             username = username.replace(".", "@");
             if (!found) {
                 getFirebase(usertype, username, password); // Will handle redirection inside
@@ -180,27 +237,58 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+<<<<<<< HEAD
 
     public boolean adminlist(String usermail, TextView requestmsg){
+=======
+    /*
+     * Checks if the user is has yet to be approved or was rejected by the admin
+     * @param usermail(String) is the email of the user
+     * @param requestmsg(TextView) is the view to show the user a message
+     * @return found(Boolean) that is true if the user yet to be approved or was rejected
+     */
+    public boolean adminlist(String usermail, String usertype){
+>>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
         String username = usermail.replace(".", "@");
         boolean found=false;
 
-        for(String request: requests){
-            if(request.equals(username)){
-                found=true;
-                String msg = "ACCESS ERROR! "+usermail+" has not been approved by the administrator yet";
-                requestmsg.setText(msg);
-                msg = usermail+" has not been approved";
-                uname.setError(msg);
+        if(usertype.equals("Student")) {
+            for (String request : requestsS) {
+                if (request.equals(username)) {
+                    found = true;
+                    String msg = "ACCESS ERROR! " + usermail + " has not been approved by the administrator yet";
+                    requestmsg.setText(msg);
+                    msg = usermail + " has not been approved";
+                    uname.setError(msg);
+                }
             }
-        }
-        for(String rejects: rejected){
-            if(rejected.equals(username)){
-                found=true;
-                String msg = "ACCESS ERROR! "+usermail+" has been rejected by the administrator";
-                requestmsg.setText(msg);
-                msg = usermail+" has been rejected";
-                uname.setError(msg);
+            for (String rejects : rejectedS) {
+                if (rejects.equals(username)) {
+                    found = true;
+                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator";
+                    requestmsg.setText(msg);
+                    msg = usermail + " has been rejected";
+                    uname.setError(msg);
+                }
+            }
+        }else if (usertype.equals("Tutor")){
+            for (String request : requestsT) {
+                if (request.equals(username)) {
+                    found = true;
+                    String msg = "ACCESS ERROR! " + usermail + " has not been approved by the administrator yet";
+                    requestmsg.setText(msg);
+                    msg = usermail + " has not been approved";
+                    uname.setError(msg);
+                }
+            }
+            for (String rejects : rejectedT) {
+                if (rejects.equals(username)) {
+                    found = true;
+                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator";
+                    requestmsg.setText(msg);
+                    msg = usermail + " has been rejected";
+                    uname.setError(msg);
+                }
             }
         }
         return found;
