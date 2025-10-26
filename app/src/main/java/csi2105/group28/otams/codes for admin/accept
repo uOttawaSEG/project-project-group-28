@@ -1,10 +1,12 @@
 for admin
 
-ArrayList<User> requests, rejected;
+ArrayList<User> requestsS, rejectedS, requestsT, rejectedT;
 
 protected void onCreate(Bundle savedInstanceState) {
-    requests = new Arraylist<User>;
-    rejected = new Arraylist<User>;
+    requestsS = new Arraylist<User>;
+    rejectedS = new Arraylist<User>;
+    requestsT = new Arraylist<User>;
+    rejectedT = new Arraylist<User>;
 }
 
 protected void onStart() {
@@ -12,8 +14,10 @@ protected void onStart() {
         otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requests.clear();
-                rejected.clear();
+                requestsS.clear();
+                rejectedS.clear();
+                requestsT.clear();
+                rejectedT.clear();
                 for (DataSnapshot children : snapshot.getChildren()) {
 
                     if (children.getKey().equals("Requests")) {
@@ -23,14 +27,14 @@ protected void onStart() {
                                     if (req.hasChildren()) {
                                         for (DataSnapshot reqTutor : req.getChildren()) {
                                             Tutor obj= reqTutor.getValue(Tutor.class);
-                                            requests.add(obj);
+                                            requestsT.add(obj);
                                         }
                                     }
                                 }else if (req.getKey().equals("Student")){
                                     if (req.hasChildren()) {
                                         for (DataSnapshot reqStudent : req.getChildren()) {
                                             Student obj= reqStudent.getValue(Student.class);
-                                            requests.add(obj);
+                                            requestsS.add(obj);
                                         }
                                     }
                                 }
@@ -43,14 +47,14 @@ protected void onStart() {
                                     if (rej.hasChildren()) {
                                         for (DataSnapshot rejTutor : rej.getChildren()) {
                                             Tutor obj= rejTutor.getValue(Tutor.class);
-                                            rejected.add(obj);
+                                            rejectedT.add(obj);
                                         }
                                     }
                                 }else if (rej.getKey().equals("Student")){
                                     if (rej.hasChildren()) {
                                         for (DataSnapshot rejStudent : rej.getChildren()) {
                                             Student obj= rejStudent.getValue(Student.class);
-                                            rejected.add(obj);
+                                            rejectedS.add(obj);
                                         }
                                     }
                                 }

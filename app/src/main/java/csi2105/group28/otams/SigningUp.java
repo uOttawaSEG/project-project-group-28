@@ -34,8 +34,7 @@ public class SigningUp extends AppCompatActivity {
     TextView majorError;
     // Layouts for conditional visibility
     LinearLayout degreeLayoutSU, coursesLayoutSU;
-    boolean hasrequests, hasrejected;
-    ArrayList<String> requests, rejected;
+    ArrayList<String> requestsS, rejectedS, requestsT, rejectedT;
 
 
 
@@ -50,8 +49,10 @@ public class SigningUp extends AppCompatActivity {
             return insets;
         });
         //initializing list for request and rejected users
-        requests = new ArrayList<>();
-        rejected = new ArrayList<>();
+        requestsS = new ArrayList<>();
+        rejectedS = new ArrayList<>();
+        requestsT = new ArrayList<>();
+        rejectedT = new ArrayList<>();
 // Tutor only layout visibility
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
@@ -135,45 +136,47 @@ public class SigningUp extends AppCompatActivity {
         otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requests.clear();
-                rejected.clear();
+                requestsS.clear();
+                rejectedS.clear();
+                requestsT.clear();
+                rejectedT.clear();
                 for (DataSnapshot children : snapshot.getChildren()) {
 
-                    if (children.getKey().equals("Requests")) {// looking through requests
+                    if (children.getKey().equals("Requests")) { // looking through requests
                         if (children.hasChildren()) {
                             for (DataSnapshot req : children.getChildren()) {
-                                if (req.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
+                                if (req.getKey().equals("Tutor")) {                   //finding tutors,if they exists and getting their username
                                     if (req.hasChildren()) {
                                         for (DataSnapshot reqTutor : req.getChildren()) {
-                                            String obj= reqTutor.getKey();
-                                            requests.add(obj);
+                                            String obj = reqTutor.getKey();
+                                            requestsT.add(obj);
                                         }
                                     }
-                                }else if(req.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                } else if (req.getKey().equals("Student")) {//finding Students,if they exists and getting their username
                                     if (req.hasChildren()) {
                                         for (DataSnapshot reqStudent : req.getChildren()) {
-                                            String obj= reqStudent.getKey();
-                                            requests.add(obj);
+                                            String obj = reqStudent.getKey();
+                                            requestsS.add(obj);
                                         }
                                     }
                                 }
                             }
                         }
-                    }else if (children.getKey().equals("Rejected")) {// looking through rejected requests
+                    } else if (children.getKey().equals("Rejected")) {// looking through rejected requests
                         if (children.hasChildren()) {
                             for (DataSnapshot rej : children.getChildren()) {
-                                if (rej.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
+                                if (rej.getKey().equals("Tutor")) {//finding tutors,if they exists and getting their username
                                     if (rej.hasChildren()) {
                                         for (DataSnapshot rejTutor : rej.getChildren()) {
-                                            String obj= rejTutor.getKey();
-                                            rejected.add(obj);
+                                            String obj = rejTutor.getKey();
+                                            rejectedT.add(obj);
                                         }
                                     }
-                                }else if (rej.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                } else if (rej.getKey().equals("Student")) {//finding Students,if they exists and getting their username
                                     if (rej.hasChildren()) {
                                         for (DataSnapshot rejStudent : rej.getChildren()) {
-                                            String obj= rejStudent.getKey();
-                                            rejected.add(obj);
+                                            String obj = rejStudent.getKey();
+                                            rejectedS.add(obj);
                                         }
                                     }
                                 }
@@ -182,14 +185,13 @@ public class SigningUp extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
     }
-
 
     /*
      * creates a new user if everything meets requirements
@@ -232,7 +234,7 @@ public class SigningUp extends AppCompatActivity {
         }
         // only try to send to firebase if everything is ok
         if (newU!=null) {
-            found= adminlist(newU.getEmail());
+            found= adminlist(newU.getEmail(), newU.getUserType());
             if(!found) {
                 newUserToFirebase(newU, usertype);
             }
@@ -287,22 +289,38 @@ public class SigningUp extends AppCompatActivity {
      * @param requestmsg(TextView) is the view to show the user a message
      * @return found(Boolean) that is true if the user yet to be approved or was rejected
      */
-    public boolean adminlist(String usermail){
+    public boolean adminlist(String usermail, String usertype){
         String username = usermail.replace(".", "@");
         boolean found=false;
-
-        for(String request: requests){
-            if(request.equals(username)){
-                found=true;
-                String msg = "Username/email is already taken for " + usermail;
-                emailGet.setError(msg);
+        if(usertype.equals("Student")) {
+            for (String request : requestsS) {
+                if (request.equals(username)) {
+                    found=true;
+                    String msg = "Username/email is already taken for " + usermail;
+                    emailGet.setError(msg);
+                }
             }
-        }
-        for(String rejects: rejected){
-            if(rejected.equals(username)){
-                found=true;
-                String msg = "Username/email is already taken for " + usermail;
-                emailGet.setError(msg);
+            for (String rejects : rejectedS) {
+                if (rejects.equals(username)) {
+                    found=true;
+                    String msg = "Username/email is already taken for " + usermail;
+                    emailGet.setError(msg);
+                }
+            }
+        }else if (usertype.equals("Tutor")){
+            for (String request : requestsT) {
+                if (request.equals(username)) {
+                    found=true;
+                    String msg = "Username/email is already taken for " + usermail;
+                    emailGet.setError(msg);
+                }
+            }
+            for (String rejects : rejectedT) {
+                if (rejects.equals(username)) {
+                    found=true;
+                    String msg = "Username/email is already taken for " + usermail;
+                    emailGet.setError(msg);
+                }
             }
         }
         return found;
