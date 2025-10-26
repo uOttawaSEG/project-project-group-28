@@ -19,15 +19,41 @@ protected void onStart() {
                     if (children.getKey().equals("Requests")) {
                         if (children.hasChildren()) {
                             for (DataSnapshot req : children.getChildren()) {
-                                User obj= req.getValue(User.class);
-                                requests.add(obj);
+                                if (req.getKey().equals("Tutor")){
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqTutor : req.getChildren()) {
+                                            Tutor obj= reqTutor.getValue(Tutor.class);
+                                            requests.add(obj);
+                                        }
+                                    }
+                                }else if (req.getKey().equals("Student")){
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqStudent : req.getChildren()) {
+                                            Student obj= reqStudent.getValue(Student.class);
+                                            requests.add(obj);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }else if (children.getKey().equals("Rejected")) {
                         if (children.hasChildren()) {
-                            for (DataSnapshot rej: children.getChildren()) {
-                                User obj= req.getValue(User.class);
-                                rejected.add(obj);
+                            for (DataSnapshot rej : children.getChildren()) {
+                                if (rej.getKey().equals("Tutor")){
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejTutor : rej.getChildren()) {
+                                            Tutor obj= rejTutor.getValue(Tutor.class);
+                                            rejected.add(obj);
+                                        }
+                                    }
+                                }else if (rej.getKey().equals("Student")){
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejStudent : rej.getChildren()) {
+                                            Student obj= rejStudent.getValue(Student.class);
+                                            rejected.add(obj);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -38,20 +64,37 @@ protected void onStart() {
 
             }
         });
-
+}
 
 for accept user
 
 DatabaseReference rootref;
 
 onCreate:
- rootref = FirebaseDatabase.getInstance().getReference("otams/Users");
+ otamstref = FirebaseDatabase.getInstance().getReference("otams");
+
+private void acceptedUser(User newUser, String origin[Rejected /Approved]){
+       String username = newUser.getUsername();
+       String userT = newUser.getUserType();
+       DatabaseReference tref;
+       tref = otamsref.child(Users).child(userT).child(username.substring(0,1)).child(username.substring(1,2));// makes a path based on the first two letter
+       tref.child(username).child("password").setValue(newUser.getPassword());
+       tref.child(username).child("info").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
+       //removing user from requests/rejected lists
+       otamsref.child("Administrator").child("admin@mail@com").child(origin).child(userT).child(username).removeValue();
+}
+
+for reject user
+DatabaseReference rootref;
+
+onCreate:
+ otamstref = FirebaseDatabase.getInstance().getReference("otams");
 
 private void acceptedUser(User newUser){
        String username = newUser.getUsername();
        String userT = newUser.getUserType();
-       DatabaseReference tref;
-       tref = rootref.child(userT).child(username.substring(0,1)).child(username.substring(1,2));// makes a path based on the first two letter
-       tref.child(username).child("password").setValue(newUser.getPassword());
-       tref.child("Administrator").child("admin@mail@com").child("Requests").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
+       //adding value to rejected list
+       otamsref.child("Administrator").child("admin@mail@com").child("Rejected").child(userT).child(username).setValue(newUser);
+       //removing user from requests/rejected lists
+       otamsref.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).removeValue();
 }

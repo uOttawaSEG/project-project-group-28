@@ -139,25 +139,45 @@ public class SigningUp extends AppCompatActivity {
                 rejected.clear();
                 for (DataSnapshot children : snapshot.getChildren()) {
 
-                    if (children.getKey().equals("Requests")) {
+                    if (children.getKey().equals("Requests")) {// looking through requests
                         if (children.hasChildren()) {
-                            hasrequests=true;
                             for (DataSnapshot req : children.getChildren()) {
-                                String obj= req.getKey();
-                                requests.add(obj);
+                                if (req.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqTutor : req.getChildren()) {
+                                            String obj= reqTutor.getKey();
+                                            requests.add(obj);
+                                        }
+                                    }
+                                }else if(req.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                    if (req.hasChildren()) {
+                                        for (DataSnapshot reqStudent : req.getChildren()) {
+                                            String obj= reqStudent.getKey();
+                                            requests.add(obj);
+                                        }
+                                    }
+                                }
                             }
-                        }else {
-                            hasrequests=false;
                         }
-                    }else if (children.getKey().equals("Rejected")) {
+                    }else if (children.getKey().equals("Rejected")) {// looking through rejected requests
                         if (children.hasChildren()) {
-                            hasrejected=true;
-                            for (DataSnapshot rej: children.getChildren()) {
-                                String obj= rej.getKey();
-                                rejected.add(obj);
+                            for (DataSnapshot rej : children.getChildren()) {
+                                if (rej.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejTutor : rej.getChildren()) {
+                                            String obj= rejTutor.getKey();
+                                            rejected.add(obj);
+                                        }
+                                    }
+                                }else if (rej.getKey().equals("Student")){//finding Students,if they exists and getting their username
+                                    if (rej.hasChildren()) {
+                                        for (DataSnapshot rejStudent : rej.getChildren()) {
+                                            String obj= rejStudent.getKey();
+                                            rejected.add(obj);
+                                        }
+                                    }
+                                }
                             }
-                        }else {
-                            hasrejected=false;
                         }
                     }
                 }
@@ -245,7 +265,8 @@ public class SigningUp extends AppCompatActivity {
                         }
                     }
                     //tref.child(username).child("password").setValue(newUser.getPassword());
-                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").setValue(newUser);//if new user, make user with key username, password/class stored in key password/info
+                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).setValue(newUser);
+                    //if new user, make user with key username, in the requsest list of the admin
                     finish();                                                      //ends after sending data to firebase
                 }catch (IllegalArgumentException e) {
                     String error = "Username/email is already taken for " + userT;
