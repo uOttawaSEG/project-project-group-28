@@ -146,7 +146,8 @@ public class AdminRequestsActivity extends AppCompatActivity {
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    approveRequest(user.getEmail());
+                    approveRequest(user.getEmail().replace(".", "@") );
+
                 }
             });
 
