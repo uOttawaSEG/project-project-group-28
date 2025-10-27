@@ -1,5 +1,6 @@
 package csi2105.group28.otams;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -131,9 +132,29 @@ public class AdminRequestsActivity extends AppCompatActivity {
         });
     }
 
-    private ConstraintLayout createUserView(User user, boolean canAccept, boolean canReject){
-        ConstraintLayout returnLayout;
-        returnLayout = new ConstraintLayout(this);
+    @SuppressLint("SetTextI18n")
+    private LinearLayout createUserView(User user, boolean canAccept, boolean canReject){
+
+        LinearLayout returnLayout = new LinearLayout(this);
+        returnLayout.setOrientation(LinearLayout.VERTICAL);
+        returnLayout.setPadding(24, 24, 24, 24);
+        returnLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        // Made a new layout for buttons so I could shift the buttons to the bottom using returnLayout.addView(buttonRow);
+        LinearLayout buttonRow = new LinearLayout(this);
+        buttonRow.setOrientation(LinearLayout.HORIZONTAL);
+        buttonRow.setPadding(0, 8, 0, 0);
+        buttonRow.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1.0f
+        );
+        btnParams.setMargins(8, 0, 8, 0);
+
 
         // add an accept button if needed
         if (canAccept) {
@@ -141,17 +162,11 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
             // set some formatting
             acceptButton.setText("Accept");
-            acceptButton.setRight(0);
+            acceptButton.setLayoutParams(btnParams);
             // make the button accept the request when clicked
-            acceptButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    approveRequest(user);
+            acceptButton.setOnClickListener(v -> approveRequest(user));
 
-                }
-            });
-
-            returnLayout.addView(acceptButton);
+            buttonRow.addView(acceptButton);
         }
 
         // add a reject button if needed
@@ -160,17 +175,13 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
             // set some formatting
             rejectButton.setText("Reject");
-            rejectButton.setRight(0);
+            rejectButton.setLayoutParams(btnParams);
             // make the button accept the request when clicked
-            rejectButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    rejectRequest(user);
-                }
-            });
+            rejectButton.setOnClickListener(v -> rejectRequest(user));
 
-            returnLayout.addView(rejectButton);
+            buttonRow.addView(rejectButton);
         }
+
 
         TextView userType = new TextView(this);
         userType.setText(user.getUserType());
@@ -185,10 +196,19 @@ public class AdminRequestsActivity extends AppCompatActivity {
             Student studentUser = (Student) user;
             userDataString = String.format("%s  %s\n%s  %s\n%s", studentUser.getFirstName(), studentUser.getLastName(), studentUser.getEmail(), studentUser.getPhoneNum(), studentUser.getProgramOfStudy());
         }
+
+
+
         userData.setText(userDataString);
+        userData.setTextSize(15);
+        userData.setPadding(0, 0, 0, 16);
         returnLayout.addView(userData);
 
+
+        returnLayout.addView(buttonRow);
+
         return returnLayout;
+
 
     }
 
