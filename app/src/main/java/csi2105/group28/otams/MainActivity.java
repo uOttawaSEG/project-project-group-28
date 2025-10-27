@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 getFirebase(usertype, username, password);
             }
         }else{
-            uname.setError("Invalid Email");              // if user does not put an email
+            uname.setError("Invalid Email");              // if user does not put an email.
         }
 
     }
