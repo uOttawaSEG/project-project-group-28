@@ -88,7 +88,7 @@ public class User implements Serializable {
     }
 
     /*
-     *@return the email of the user
+     *@return the password of the user
      */
     public String getPassword() {
         return password;
