@@ -36,8 +36,6 @@ public class SigningUp extends AppCompatActivity {
     LinearLayout degreeLayoutSU, coursesLayoutSU;
     ArrayList<String> requestsS, rejectedS, requestsT, rejectedT;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +51,13 @@ public class SigningUp extends AppCompatActivity {
         rejectedS = new ArrayList<>();
         requestsT = new ArrayList<>();
         rejectedT = new ArrayList<>();
-// Tutor only layout visibility
+        // Tutor only layout visibility
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
         coursesLayoutSU = findViewById(R.id.coursesLayoutSU);
 
         // 2. Setup spinner
         utype = findViewById(R.id.typeSU);
-
 
         utype.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
@@ -81,9 +78,6 @@ public class SigningUp extends AppCompatActivity {
                 // Do nothing
             }
         });
-
-
-
 
         //set the reference of the firebase to the users(where students and tutor info are stored)
         otamsroot = FirebaseDatabase.getInstance().getReference("otams");
@@ -110,14 +104,10 @@ public class SigningUp extends AppCompatActivity {
         //Set a listener that puts a message when password is being typed
         passwordGet.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) { }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -187,9 +177,7 @@ public class SigningUp extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
@@ -266,10 +254,25 @@ public class SigningUp extends AppCompatActivity {
                             throw new IllegalArgumentException("Username already exists. Use another email."); //checks if username exist so no overwrite occurs
                         }
                     }
+
                     //tref.child(username).child("password").setValue(newUser.getPassword());
-                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).setValue(newUser);
-                    //if new user, make user with key username, in the requsest list of the admin
-                    finish();                                                      //ends after sending data to firebase
+                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).setValue(newUser)
+                            .addOnSuccessListener(aVoid -> {
+                                // ✅ Show pending approval message
+                                android.widget.Toast.makeText(SigningUp.this,
+                                        "Your account approval is now pending. Please check back later.",
+                                        android.widget.Toast.LENGTH_LONG).show();
+                                // Optionally redirect to login screen
+                                android.content.Intent intent = new android.content.Intent(SigningUp.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                android.widget.Toast.makeText(SigningUp.this,
+                                        "Failed to submit your request: " + e.getMessage(),
+                                        android.widget.Toast.LENGTH_SHORT).show();
+                            });
+
                 }catch (IllegalArgumentException e) {
                     String error = "Username/email is already taken for " + userT;
                     majorError.setText(error);

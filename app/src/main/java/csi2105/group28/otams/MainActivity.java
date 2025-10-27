@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         //initialize the username and password editText
         uname = findViewById(R.id.unameG);
         pass = findViewById(R.id.passG);
-        requestmsg= findViewById(R.id.requestMessage);
 
 
     }
@@ -203,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
             found = adminlist(username,usertype);
             username = username.replace(".", "@");
             if (!found) {
-            getFirebase(usertype, username, password);
+                getFirebase(usertype, username, password);
             }
         }else{
-            uname.setError("Invalid Email");              // if user does not put an email
+            uname.setError("Invalid Email");              // if user does not put an email.
         }
 
     }
@@ -282,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         if(userType.equals("Administrator")){
             tref = otamsroot.child("Administrator").child(username);
         }else {
-            tref = otamsroot.child(userType).child(username.substring(0,1)).child(username.substring(1,2)).child(username);
+            tref = otamsroot.child("Users").child(userType).child(username.substring(0,1)).child(username.substring(1,2)).child(username);
         }             //gets reference to the place where user data is stored
 
         if(updatePass){
@@ -316,9 +315,18 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         userdata = snapshot.child("info").getValue(User.class);
                     }
-                    Intent intent = new Intent(MainActivity.this, SignedIn.class);
-                    intent.putExtra("info", userdata);               //go to signed in
-                    startActivity(intent);
+
+                    // send admins straight to requests screen
+                    if (userType.equals("Administrator")) {
+                        Intent intent = new Intent(MainActivity.this, AdminRequestsActivity.class);
+                        intent.putExtra("info", userdata);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(MainActivity.this, SignedIn.class);
+                        intent.putExtra("info", userdata);               //go to signed in
+                        startActivity(intent);
+                    }
+
                 }else{
                     pass.setError("Wrong password");                 // if password wrong
                 }

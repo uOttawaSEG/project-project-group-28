@@ -1,5 +1,7 @@
 package csi2105.group28.otams;
 
+import java.io.Serializable;
+
 public class Student extends User {
 
     private String programOfStudy;
@@ -7,34 +9,22 @@ public class Student extends User {
     // Empty constructor for Firebase or serialization
     public Student() {
         super(); // Calls empty constructor of User
+        setStatus("pending"); // default new student status
     }
 
     /**
      * Regular constructor
-     * @param firstName is the first name of the student
-     * @param lastName is the last name of the student
-     * @param email is the email of the student
-     * @param password is the password of the student
-     * @param phoneNum is the phone number of the student
-     * @param programOfStudy is the program of study for the student
      */
     public Student(String firstName, String lastName, String email, String password, String phoneNum, String programOfStudy) {
-        super("Student", firstName, lastName, email, password, phoneNum); // calls User constructor
+        super("Student", firstName, lastName, email, password, phoneNum);
         this.programOfStudy = programOfStudy;
+        setStatus("pending"); // default new student status
     }
 
-    /**
-     * Getter for the program of study.
-     * @return the program of study of the student
-     */
     public String getProgramOfStudy() {
         return programOfStudy;
     }
 
-    /**
-     * Setter for the program of study.
-     * @param programOfStudy is the new program of study for the student
-     */
     public void setProgramOfStudy(String programOfStudy) {
         this.programOfStudy = programOfStudy;
     }
