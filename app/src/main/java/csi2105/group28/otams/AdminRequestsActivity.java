@@ -48,17 +48,17 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
         adminRef = FirebaseDatabase.getInstance()
                 .getReference("otams/Administrator/admin@mail@com");
-        loadRequests(currentNode);
+        loadRequests();
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0: currentNode = "Requests"; break;
-                    case 1: currentNode = "Rejected"; break;
+                if (tab.getPosition() == 0) {
+                    loadRequests();
+                } else if (tab.getPosition() == 1) {
+                    loadRejects();
                 }
-                loadRequests(currentNode);
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
@@ -191,16 +191,21 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
     }
 
-    private void loadRequests(String nodeName) {
+    private void loadRequests() {
         requestsContainer.removeAllViews();
-
-        for(User user : requestsT){
-            requestsContainer.addView(createUserView(user, true, true));
-        }
         for(User user : requestsS){
             requestsContainer.addView(createUserView(user, true, true));
         }
     }
+
+    private void loadRejects() {
+        requestsContainer.removeAllViews();
+        for(User user : rejectedS){
+            requestsContainer.addView(createUserView(user, true, false));
+        }
+    }
+
+
 
     private void showApproveRejectDialog(String email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -215,13 +220,13 @@ public class AdminRequestsActivity extends AppCompatActivity {
         adminRef.child("Requests").child(email).removeValue();
         adminRef.child("Approved").child(email).setValue(true);
         Toast.makeText(this, email + " approved", Toast.LENGTH_SHORT).show();
-        loadRequests(currentNode);
+        loadRequests();
     }
 
     private void rejectRequest(String email) {
         adminRef.child("Requests").child(email).removeValue();
         adminRef.child("Rejected").child(email).setValue(true);
         Toast.makeText(this, email + " rejected", Toast.LENGTH_SHORT).show();
-        loadRequests(currentNode);
+        loadRequests();
     }
 }
