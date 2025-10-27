@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
             for (String rejects : rejectedS) {
                 if (rejects.equals(username)) {
                     found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator";
+                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator. Please contact the administration at 693-345-2314";
                     requestmsg.setText(msg);
                     msg = usermail + " has been rejected";
                     uname.setError(msg);
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             for (String rejects : rejectedT) {
                 if (rejects.equals(username)) {
                     found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator";
+                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator. Please contact the administration at 693-345-2314";
                     requestmsg.setText(msg);
                     msg = usermail + " has been rejected";
                     uname.setError(msg);
