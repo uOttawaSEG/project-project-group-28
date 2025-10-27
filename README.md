@@ -26,7 +26,48 @@ To become a Tutor, a user submits a registration request that must be approved b
 * Cancel sessions.
 * Approve or reject session requests.
 The Tutor may also elect to auto‑approve all session requests, so they do not have to act on each one individually. Requests are simply accepted automatically.  Administrator  The Administrator is a pre-registered user (their username and password are seeded in the  database when the system is first launched). The Administrator can approve or reject  registration requests from Students and Tutors
----
+
+### Administrator
+The Administrator can:
+- View and approve or reject registration requests from Students and Tutors.
+- Re-approve previously rejected registration requests.
+- View current users already approved.
+- Manage data in the Firebase database and update user states dynamically.
+
+- ## Implementation Details
+- ### Admin Feature
+- **Database operations** implemented for approving, rejecting, and re-approving registration requests.  
+- User data moves dynamically between **Pending**, **Rejected**, and **Users** states in Firebase.  
+- **UI Components**:
+  - `activity_admin.xml` — layout for viewing Pending and Rejected requests.  
+  - Each card shows name, email, role (`Student` or `Tutor`), and contact info, with **Accept** and **Reject** buttons.  
+- **Navigation Update:** Admins are redirected to the admin page after login.  
+- **Crash Fix:** Resolved crash issue when approving users (previously caused by null references).  
+- **Formatting Improvements:** XML and RecyclerView layouts standardized for consistent display.
+
+### Database Overview
+OTAMS uses **Firebase Realtime Database** to store and manage all user and registration data.  
+Data is organized into three main sections:
+- `/requests/pending` — new registration requests awaiting admin action.  
+- `/requests/rejected` — users whose requests were declined but can later be approved.  
+- `/users` — all approved and active users.
+
+This structure supports seamless state transitions between pending, rejected, and approved users.
 
 ### Contributors
-- Daniella Disonama Phemba
+
+| Name | Contributions |
+|------|----------------|
+| **Zoheyr** | Developed and finalized database logic for approval/rejection; ensured data flow consistency between Firebase nodes. |
+| **Yan** | Implemented `UserAdministration` class, fixed crash when approving users, improved list population and layout formatting. |
+| **Chaima** | Managed admin navigation, integrated feedback messages, coordinated commits, and tested admin functionality. |
+| **Deyzerah** | Assisted with UI testing and quality checks. |
+| **Daniella** | Completed and formatted README documentation for submission. |
+| **Michael** | Created UML diagrams and reviewed technical consistency. |
+
+### Known Fixes and Updates
+- Fixed crash when approving users.  
+- Updated database logic for correct state transitions.
+- Unified Accept/Reject functionality across all request lists.  
+- Adjusted UI layout and styling for consistency.  
+- Integrated all working changes into the `admin_feature` branch.
