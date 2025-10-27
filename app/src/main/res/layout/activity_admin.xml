@@ -10,7 +10,7 @@
     android:padding="16dp"
     tools:context=".AdminRequestsActivity">
 
-    <!-- Title !-->
+    <!-- Title header !-->
     <TextView
         android:id="@+id/adminTitle"
         android:layout_width="match_parent"

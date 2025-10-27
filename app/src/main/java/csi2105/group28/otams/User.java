@@ -145,7 +145,7 @@ public class User implements Serializable {
     }
 
     /*sets the firebase username of the user
-     *@param username (String) is the firebase username of the user
+     *@param username (String) is the firebase username of the user.
      */
     public void setUsername(String username) {
         this.username = username;
