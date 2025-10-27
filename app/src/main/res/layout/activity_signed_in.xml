@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".SignedIn">
+
+    <!-- Welcome or current status message -->
 
     <TextView
         android:id="@+id/Welcome"
-        android:layout_width="298dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal|center_vertical"
+        android:layout_width="393dp"
+        android:layout_height="258dp"
+        android:layout_marginTop="104dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:padding="16dp"
         android:text="@string/blank"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/Data"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/Data"
         android:visibility="gone"
-        android:layout_width="382dp"
-        android:layout_height="320dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/blank"
-        android:gravity="start|center_vertical"
+        android:gravity="start"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/Welcome"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.333" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- back button!-->
     <Button
         android:id="@+id/backSI"
-        android:layout_width="119dp"
-        android:layout_height="67dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:onClick="onClickBack"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Data"
-        app:layout_constraintVertical_bias="0.451" />
+        app:layout_constraintTop_toBottomOf="@id/Data" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private String email, password, userType, username, firstName, lastName, phoneNum;
+    private String status; // new field to track approval: "pending", "approved", "rejected"
 
     /*
      * Constructor for the User class. creates a firebase username by replacing the '.' in the email with an '@'
@@ -30,20 +31,23 @@ public class User implements Serializable {
         setLastName(lastName);
         setPhoneNum(phoneNum);
         username = this.email.replace(".", "@"); //creates a firebase username by replacing the '.' in the email with an '@'
+        this.status = "pending"; // default status for new users
     }
+
     //temp constructor until implementation
     public User(String userType, String email, String password) {
         this.userType = userType;
         setEmail(email);
         setPassword(password);
         username = this.email.replace(".", "@"); //creates a firebase username by replacing the '.' in the email with an '@'
+        this.status = "pending"; // default status
     }
 
     /*
      * Empty constructor class for firebase to create a class
      */
     public User() {
-
+        this.status = "pending"; // default status
     }
 
     /*
@@ -133,7 +137,6 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
-
     /*
      *@return the firebase username of the user
      */
@@ -219,6 +222,21 @@ public class User implements Serializable {
      */
     public String getPhoneNum() {
         return phoneNum;
+    }
+
+    /*
+     *@return the approval status of the user
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /*
+     *@set the approval status of the user
+     *@param status (String) can be "pending", "approved", or "rejected"
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
