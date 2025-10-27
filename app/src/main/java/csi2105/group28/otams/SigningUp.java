@@ -33,7 +33,7 @@ public class SigningUp extends AppCompatActivity {
     EditText emailGet, passwordGet, firstnamedGet, lastnameGet, phonenumGet, programOfStudyGet, highestDegreeGet, coursesOfferedGet;
     TextView majorError;
     // Layouts for conditional visibility
-    LinearLayout degreeLayoutSU, coursesLayoutSU;
+    LinearLayout degreeLayoutSU, coursesLayoutSU, programLayoutSU;
     ArrayList<String> requestsS, rejectedS, requestsT, rejectedT;
 
     @Override
@@ -55,6 +55,7 @@ public class SigningUp extends AppCompatActivity {
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
         coursesLayoutSU = findViewById(R.id.coursesLayoutSU);
+        programLayoutSU = findViewById(R.id.programLayoutSU);
 
         // 2. Setup spinner
         utype = findViewById(R.id.typeSU);
@@ -65,11 +66,13 @@ public class SigningUp extends AppCompatActivity {
                 String selectedUser = parent.getItemAtPosition(position).toString();
 
                 if (selectedUser.equals("Tutor")) {
+                    programLayoutSU.setVisibility(View.GONE);
                     degreeLayoutSU.setVisibility(View.VISIBLE);
                     coursesLayoutSU.setVisibility(View.VISIBLE);
                 } else {
                     degreeLayoutSU.setVisibility(View.GONE);
                     coursesLayoutSU.setVisibility(View.GONE);
+                    programLayoutSU.setVisibility(View.VISIBLE);
                 }
             }
 
