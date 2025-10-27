@@ -41,8 +41,7 @@ The Administrator can:
 - **UI Components**:
   - `activity_admin.xml` — layout for viewing Pending and Rejected requests.  
   - Each card shows name, email, role (`Student` or `Tutor`), and contact info, with **Accept** and **Reject** buttons.  
-- **Navigation Update:** Admins are redirected to the admin page after login.  
-- **Crash Fix:** Resolved crash issue when approving users (previously caused by null references).  
+- **Navigation Update:** Admins are redirected to the admin page after login.    
 - **Formatting Improvements:** XML and RecyclerView layouts standardized for consistent display.
 
 ### Database Overview
