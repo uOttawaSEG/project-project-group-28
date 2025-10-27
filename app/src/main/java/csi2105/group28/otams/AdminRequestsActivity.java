@@ -146,7 +146,7 @@ public class AdminRequestsActivity extends AppCompatActivity {
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    approveRequest(user.getEmail().replace(".", "@") );
+                    approveRequest(user);
 
                 }
             });
@@ -165,7 +165,7 @@ public class AdminRequestsActivity extends AppCompatActivity {
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    rejectRequest(user.getEmail());
+                    rejectRequest(user);
                 }
             });
 
@@ -208,26 +208,49 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
 
 
-    private void showApproveRejectDialog(String email) {
+    private void showApproveRejectDialog(User user) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Approve or Reject")
-                .setMessage("Do you want to approve or reject " + email + "?")
-                .setPositiveButton("Approve", (dialog, which) -> approveRequest(email))
-                .setNegativeButton("Reject", (dialog, which) -> rejectRequest(email))
+                .setMessage("Do you want to approve or reject " + user.getEmail() + "?")
+                .setPositiveButton("Approve", (dialog, which) -> approveRequest(user))
+                .setNegativeButton("Reject", (dialog, which) -> rejectRequest(user))
                 .show();
     }
 
-    private void approveRequest(String email) {
-        adminRef.child("Requests").child(email).removeValue();
-        adminRef.child("Approved").child(email).setValue(true);
-        Toast.makeText(this, email + " approved", Toast.LENGTH_SHORT).show();
+    private void approveRequest(User user) {
+        String username = user.getUsername();
+        String userT = user.getUserType();
+        String status = user.getStatus();       //getting important values of the user
+        String origin="";
+        user.setStatus("approved");    // user approved
+
+        DatabaseReference tref;
+        tref = otamsroot.child("Users").child(userT).child(username.substring(0,1)).child(username.substring(1,2));// makes a path based on the first two letter
+        tref.child(username).child("password").setValue(user.getPassword()); // sets pasword of user
+        tref.child(username).child("info").setValue(user);//if new user, make user with key username, password/class stored in key password/info
+        // finding where the user is currently stored
+        if(status.equals("rejected")){
+            origin="Rejected";
+        }else if(status.equals("pending")){
+            origin="Requests";
+        }
+
+        //removing user from requests/rejected lists
+        otamsroot.child("Administrator").child("admin@mail@com").child(origin).child(userT).child(username).removeValue();
+        Toast.makeText(this, user.getEmail() + " approved", Toast.LENGTH_SHORT).show();
         loadRequests();
     }
 
-    private void rejectRequest(String email) {
-        adminRef.child("Requests").child(email).removeValue();
-        adminRef.child("Rejected").child(email).setValue(true);
-        Toast.makeText(this, email + " rejected", Toast.LENGTH_SHORT).show();
+    private void rejectRequest(User user) {
+        String username = user.getUsername();
+        String userT = user.getUserType();
+        user.setStatus("rejected");    // user rejected
+        //adding value to rejected list
+        otamsroot.child("Administrator").child("admin@mail@com").child("Rejected").child(userT).child(username).setValue(user);
+        //removing user from requests/rejected lists
+        otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).removeValue();
+
+        Toast.makeText(this, user.getEmail() + " rejected", Toast.LENGTH_SHORT).show();
         loadRequests();
     }
 }
