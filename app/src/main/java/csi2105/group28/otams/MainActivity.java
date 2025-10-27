@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         uname = findViewById(R.id.unameG);
         pass = findViewById(R.id.passG);
 
+        requestmsg= findViewById(R.id.requestMessage);
+
 
     }
 
