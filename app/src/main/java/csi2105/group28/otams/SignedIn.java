@@ -28,7 +28,7 @@ public class SignedIn extends AppCompatActivity {
         Intent intent = getIntent();
         thisuser = (User) getIntent().getSerializableExtra("info");
 
-        //Says welcome or status-specific message
+        // set up displays welcome or status-specific message
         TextView welcome = findViewById(R.id.Welcome);
         String status = thisuser.getStatus();  // get user status
         String welcomeMSG;
@@ -44,7 +44,7 @@ public class SignedIn extends AppCompatActivity {
                 break;
 
             case "rejected":
-                welcomeMSG = "Sorry " + thisuser.getFirstName() + ", your account has been rejected.\n" +
+                welcomeMSG = "Sorry " + thisuser.getFirstName() + ", your account request has been rejected.\n" +
                         "Contact support at: 555-555-5555 for more information.";
                 break;
 
@@ -55,13 +55,7 @@ public class SignedIn extends AppCompatActivity {
 
         welcome.setText(welcomeMSG);
 
-        // Optional debug text to see if everything is stored in firebase user class
-        /*
-        TextView data = findViewById(R.id.Data);
-        String dataMSG = "User Type:\t" + thisuser.getUserType() + "\nEmail:\t" + thisuser.getUsername() +
-                "\nUser Password:\t" + thisuser.getPassword() + "\nFirebase Username:\t" + thisuser.getUsername();
-        data.setText(dataMSG);
-        */
+
     }
 
     public void onClickBack(View view){

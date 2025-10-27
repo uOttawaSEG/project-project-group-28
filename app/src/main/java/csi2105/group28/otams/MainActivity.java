@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseReference otamsroot;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //setup dynamic user-defined colors
+        // https://developer.android.com/develop/ui/views/theming/dynamic-colors
         DynamicColors.applyToActivityIfAvailable(this);
         DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
 
@@ -70,17 +72,15 @@ public class MainActivity extends AppCompatActivity {
         //initialize the username and password editText
         uname = findViewById(R.id.unameG);
         pass = findViewById(R.id.passG);
-<<<<<<< HEAD
-=======
         requestmsg= findViewById(R.id.requestMessage);
 
 
->>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
     }
 
     /*
      * Starts a firebase value event listener
      * initiates admins and use/tutor separation if there is nothing in the firebase
+     *
      */
     protected void onStart() {
         super.onStart();
@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     User admin = new User("Administrator", "admin", "me","admin@mail.com", "Admin001", "100020653");
                     otamsroot.child("Administrator").child("admin@mail@com").child("info").setValue(admin);
                     otamsroot.child("Administrator").child("admin@mail@com").child("password").setValue("Admin001");
+                    otamsroot.child("Administrator").child("admin@mail@com").child("status").setValue("approved"); // ✅ added auto-approve admin
                     otamsroot.child("Users").child("Student").push().setValue("");
                     otamsroot.child("Users").child("Tutor").push().setValue("");          //initial values of firebase
                 }
@@ -114,14 +115,6 @@ public class MainActivity extends AppCompatActivity {
                 rejectedT.clear();
                 for (DataSnapshot children : snapshot.getChildren()) {
 
-<<<<<<< HEAD
-                    if (children.getKey().equals("Requests")) {
-                        if (children.hasChildren()) {
-                            hasrequests=true;
-                            for (DataSnapshot req : children.getChildren()) {
-                                String obj= req.getKey();
-                                requests.add(obj);
-=======
                     if (children.getKey().equals("Requests")) { // looking through requests
                         if (children.hasChildren()) {
                             for (DataSnapshot req : children.getChildren()) {
@@ -140,22 +133,8 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
->>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
                             }
-                        }else {
-                            hasrequests=false;
                         }
-<<<<<<< HEAD
-                    }else if (children.getKey().equals("Rejected")) {
-                        if (children.hasChildren()) {
-                            hasrejected=true;
-                            for (DataSnapshot rej: children.getChildren()) {
-                                String obj= rej.getKey();
-                                rejected.add(obj);
-                            }
-                        }else {
-                            hasrejected=false;
-=======
                     }else if (children.getKey().equals("Rejected")) {// looking through rejected requests
                         if (children.hasChildren()) {
                             for (DataSnapshot rej : children.getChildren()) {
@@ -175,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             }
->>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
                         }
                     }
                 }
@@ -202,10 +180,6 @@ public class MainActivity extends AppCompatActivity {
         String password =  pass.getText().toString();
         String usertype = utype.getSelectedItem().toString();               //  get all the values
         boolean valid = false, first=false, found=false;
-<<<<<<< HEAD
-        TextView requestmsg = findViewById(R.id.requestMessage);
-=======
->>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
         requestmsg.setText("");
 
         for (int i = 0; i < username.length(); i++) {
@@ -230,17 +204,13 @@ public class MainActivity extends AppCompatActivity {
             found = adminlist(username,usertype);
             username = username.replace(".", "@");
             if (!found) {
-                getFirebase(usertype, username, password); // Will handle redirection inside
+                getFirebase(usertype, username, password);
             }
         }else{
             uname.setError("Invalid Email");              // if user does not put an email
         }
 
     }
-<<<<<<< HEAD
-
-    public boolean adminlist(String usermail, TextView requestmsg){
-=======
     /*
      * Checks if the user is has yet to be approved or was rejected by the admin
      * @param usermail(String) is the email of the user
@@ -248,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
      * @return found(Boolean) that is true if the user yet to be approved or was rejected
      */
     public boolean adminlist(String usermail, String usertype){
->>>>>>> e1e1297f95d7ae9759f22bf902717517a46f2cba
         String username = usermail.replace(".", "@");
         boolean found=false;
 
@@ -314,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         if(userType.equals("Administrator")){
             tref = otamsroot.child("Administrator").child(username);
         }else {
-            tref = otamsroot.child(userType).child(username.substring(0,1)).child(username.substring(1,2)).child(username);
+            tref = otamsroot.child("Users").child(userType).child(username.substring(0,1)).child(username.substring(1,2)).child(username);
         }             //gets reference to the place where user data is stored
 
         if(updatePass){
@@ -323,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         tref.child("info").setValue(changeUser); //sets the value of the user class and password
     }
 
-    private void getFirebase(String userType, String username, String password) {
+    private void getFirebase( String userType, String username, String password) {
         uname.setError(null);
         pass.setError(null);
         DatabaseReference tref;
@@ -331,38 +300,43 @@ public class MainActivity extends AppCompatActivity {
             tref = otamsroot.child("Administrator").child(username);
         } else {
             tref = otamsroot.child("Users").child(userType).child(username.substring(0, 1)).child(username.substring(1, 2)).child(username);
-        }
+        }                    //gets reference to the place where user data is stored
         tref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                String storedpassword = snapshot.child("password").getValue(String.class);
+                String storedpassword = snapshot.child("password").getValue(String.class);    //gets password
+                System.out.println(tref);
                 if(storedpassword==null){
-                    uname.setError("User does not exist");
+                    uname.setError("User does not exist");                   // returns null when acessing a non-data
                 }else if(storedpassword.equals(password)) {
                     User userdata;
                     if (userType.equals("Tutor")){
-                        userdata = snapshot.child("info").getValue(Tutor.class);
-                    } else if(userType.equals("Student")){
-                        userdata = snapshot.child("info").getValue(Student.class);
-                    } else {
+                        userdata = snapshot.child("info").getValue(Tutor.class);             //if passwword is right
+                    }else if(userType.equals("Student")){
+                        userdata = snapshot.child("info").getValue(Student.class);             //if passwword is right
+                    }else{
                         userdata = snapshot.child("info").getValue(User.class);
-                        // If admin, redirect to admin requests list
-                        Intent intent = new Intent(MainActivity.this, AdminRequestsActivity.class);
-                        startActivity(intent);
-                        return;
                     }
-                    Intent intent = new Intent(MainActivity.this, SignedIn.class);
-                    intent.putExtra("info", userdata);
-                    startActivity(intent);
-                } else {
-                    pass.setError("Wrong password");
+
+                    // send admins straight to requests screen
+                    if (userType.equals("Administrator")) {
+                        Intent intent = new Intent(MainActivity.this, AdminRequestsActivity.class);
+                        intent.putExtra("info", userdata);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(MainActivity.this, SignedIn.class);
+                        intent.putExtra("info", userdata);               //go to signed in
+                        startActivity(intent);
+                    }
+
+                }else{
+                    pass.setError("Wrong password");                 // if password wrong
                 }
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // leave the comments that are already there
             }
         });
     }
