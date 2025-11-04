@@ -28,13 +28,13 @@ import java.util.Arrays;
 
 public class SigningUp extends AppCompatActivity {
 
-    DatabaseReference otamsroot, rootref;
+
     Spinner utype;
     EditText emailGet, passwordGet, firstnamedGet, lastnameGet, phonenumGet, programOfStudyGet, highestDegreeGet, coursesOfferedGet;
     TextView majorError;
     // Layouts for conditional visibility
     LinearLayout degreeLayoutSU, coursesLayoutSU, programLayoutSU;
-    ArrayList<String> requestsS, rejectedS, requestsT, rejectedT;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +46,7 @@ public class SigningUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //initializing list for request and rejected users
-        requestsS = new ArrayList<>();
-        rejectedS = new ArrayList<>();
-        requestsT = new ArrayList<>();
-        rejectedT = new ArrayList<>();
+
         // Tutor only layout visibility
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
@@ -82,9 +78,6 @@ public class SigningUp extends AppCompatActivity {
             }
         });
 
-        //set the reference of the firebase to the users(where students and tutor info are stored)
-        otamsroot = FirebaseDatabase.getInstance().getReference("otams");
-        rootref = FirebaseDatabase.getInstance().getReference("otams/Users");
         //initilalizes spinner/selector and sets its values
         utype = findViewById(R.id.typeSU);
         String [] spinnerIt = new String[]{"Student","Tutor"};
@@ -126,62 +119,7 @@ public class SigningUp extends AppCompatActivity {
      */
     protected void onStart() {
         super.onStart();
-        otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requestsS.clear();
-                rejectedS.clear();
-                requestsT.clear();
-                rejectedT.clear();
-                for (DataSnapshot children : snapshot.getChildren()) {
 
-                    if (children.getKey().equals("Requests")) { // looking through requests
-                        if (children.hasChildren()) {
-                            for (DataSnapshot req : children.getChildren()) {
-                                if (req.getKey().equals("Tutor")) {                   //finding tutors,if they exists and getting their username
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqTutor : req.getChildren()) {
-                                            String obj = reqTutor.getKey();
-                                            requestsT.add(obj);
-                                        }
-                                    }
-                                } else if (req.getKey().equals("Student")) {//finding Students,if they exists and getting their username
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqStudent : req.getChildren()) {
-                                            String obj = reqStudent.getKey();
-                                            requestsS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else if (children.getKey().equals("Rejected")) {// looking through rejected requests
-                        if (children.hasChildren()) {
-                            for (DataSnapshot rej : children.getChildren()) {
-                                if (rej.getKey().equals("Tutor")) {//finding tutors,if they exists and getting their username
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejTutor : rej.getChildren()) {
-                                            String obj = rejTutor.getKey();
-                                            rejectedT.add(obj);
-                                        }
-                                    }
-                                } else if (rej.getKey().equals("Student")) {//finding Students,if they exists and getting their username
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejStudent : rej.getChildren()) {
-                                            String obj = rejStudent.getKey();
-                                            rejectedS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
-        });
     }
 
     /*
@@ -225,9 +163,12 @@ public class SigningUp extends AppCompatActivity {
         }
         // only try to send to firebase if everything is ok
         if (newU!=null) {
-            found= adminlist(newU.getEmail(), newU.getUserType());
-            if(!found) {
-                newUserToFirebase(newU, usertype);
+
+            if(! Database.isPendingOrRejected(newU.getEmail(), newU.getUserType())) {
+                Database.newUser(newU, usertype);
+            } else {
+                String msg = "Username/email is already taken for " + newU.getEmail();
+                emailGet.setError(msg);
             }
         }
     }
@@ -240,95 +181,7 @@ public class SigningUp extends AppCompatActivity {
         finish();
     }
 
-    // creates a new storage for the user in firebase
-    private void newUserToFirebase(User newUser, String userT){
 
-        String username = newUser.getUsername();
-        DatabaseReference tref;
-        tref = rootref.child(userT).child(username.substring(0,1)).child(username.substring(1,2));// makes a path based on the first two letter
-        tref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            //everything in the snapshot is done in sync, everything outside is async. calling values gotten here outside will have
-            //a nullpointer exeption
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
-                    for (DataSnapshot children : snapshot.getChildren()) {
-                        if (children.getKey().compareTo(username) == 0) {
-                            throw new IllegalArgumentException("Username already exists. Use another email."); //checks if username exist so no overwrite occurs
-                        }
-                    }
 
-                    //tref.child(username).child("password").setValue(newUser.getPassword());
-                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).setValue(newUser)
-                            .addOnSuccessListener(aVoid -> {
-                                // ✅ Show pending approval message
-                                android.widget.Toast.makeText(SigningUp.this,
-                                        "Your account approval is now pending. Please check back later.",
-                                        android.widget.Toast.LENGTH_LONG).show();
-                                // Optionally redirect to login screen
-                                android.content.Intent intent = new android.content.Intent(SigningUp.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                android.widget.Toast.makeText(SigningUp.this,
-                                        "Failed to submit your request: " + e.getMessage(),
-                                        android.widget.Toast.LENGTH_SHORT).show();
-                            });
 
-                }catch (IllegalArgumentException e) {
-                    String error = "Username/email is already taken for " + userT;
-                    majorError.setText(error);
-                    emailGet.setError(error);                                       // shows error if username already taken
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    /*
-     * Checks if the user is has yet to be approved or was rejected by the admin
-     * @param usermail(String) is the email of the user
-     * @param requestmsg(TextView) is the view to show the user a message
-     * @return found(Boolean) that is true if the user yet to be approved or was rejected
-     */
-    public boolean adminlist(String usermail, String usertype){
-        String username = usermail.replace(".", "@");
-        boolean found=false;
-        if(usertype.equals("Student")) {
-            for (String request : requestsS) {
-                if (request.equals(username)) {
-                    found=true;
-                    String msg = "Username/email is already taken for " + usermail;
-                    emailGet.setError(msg);
-                }
-            }
-            for (String rejects : rejectedS) {
-                if (rejects.equals(username)) {
-                    found=true;
-                    String msg = "Username/email is already taken for " + usermail;
-                    emailGet.setError(msg);
-                }
-            }
-        }else if (usertype.equals("Tutor")){
-            for (String request : requestsT) {
-                if (request.equals(username)) {
-                    found=true;
-                    String msg = "Username/email is already taken for " + usermail;
-                    emailGet.setError(msg);
-                }
-            }
-            for (String rejects : rejectedT) {
-                if (rejects.equals(username)) {
-                    found=true;
-                    String msg = "Username/email is already taken for " + usermail;
-                    emailGet.setError(msg);
-                }
-            }
-        }
-        return found;
-    }
 }
