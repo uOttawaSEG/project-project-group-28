@@ -13,6 +13,7 @@ import com.google.firebase.database.*;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -138,7 +139,7 @@ public class TutorAvailabilityActivity extends AppCompatActivity
                     String start = dataSnapshot.child("start").getValue(String.class);
                     String end = dataSnapshot.child("end").getValue(String.class);
                     boolean Booked = dataSnapshot.child("Booked").getValue(boolean.class);
-                    String slot = "Tutor: " + TutorFirstname + " " + TutorLastname + " | " + ChosenCourse + " | " + date + " | " + start + " | " + end + " | " + (Booked ? "Booked" : "Available");
+                    String slot = "Tutor: " + TutorFirstname + " " + TutorLastname + " |  Course: "+ ChosenCourse + " | Date: " + date + " | Start time: " + start + " | End time: " + end + " | Status: " + (Booked ? "Booked" : "Available");
                     TutorSlotDisplay.add(slot);
                     slotKeys.add(key);
                 }
@@ -164,6 +165,11 @@ public class TutorAvailabilityActivity extends AppCompatActivity
             Toast.makeText(TutorAvailabilityActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!isValidTime(start) || !isValidTime(end))
+        {
+            Toast.makeText(TutorAvailabilityActivity.this, "Times must be in 30 minute increments (e.g. 10:00, 10:30, 11:00)", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String SlotID = UUID.randomUUID().toString();
         Map<String, Object> slotData = new HashMap<>();
@@ -181,6 +187,25 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Mehtod: AddSlot Error ", Toast.LENGTH_SHORT).show());
 
     }
+
+    private boolean isValidTime(String time)
+    {
+        if (!time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$" ))
+        {
+        return false;
+    }
+        try
+        {
+            {
+                String[] Timeparts = time.split(":");
+                int minutes =  Integer.parseInt(Timeparts[1]);
+                return minutes % 30 == 0;
+            }
+        } catch (Exception e) {
+            throw new NumberFormatException();
+        }
+    }
+
     private void loadTutorInfo(DatabaseReference tutorInfoReference)
     {
         tutorInfoReference.addListenerForSingleValueEvent(new ValueEventListener()
