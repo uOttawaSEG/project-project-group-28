@@ -28,7 +28,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DatabaseReference otamsroot;
-    ArrayList<String> childrenlist, requestsS, rejectedS, requestsT, rejectedT;
+
+    Database db;
+    ArrayList<String> childrenlist;
 
 
     private static final String TAG = "MainActivity";
@@ -58,10 +60,7 @@ public class MainActivity extends AppCompatActivity {
         //set the reference of the firebase to the otams where everything is stored
         otamsroot = FirebaseDatabase.getInstance().getReference("otams");
         childrenlist = new ArrayList<>();
-        requestsS = new ArrayList<>();
-        rejectedS = new ArrayList<>();
-        requestsT = new ArrayList<>();
-        rejectedT = new ArrayList<>();
+        db= new Database();
         //initilalizes spinner/selector and sets its values
         utype = findViewById(R.id.utype);
         String [] spinnerIt = new String[]{"Administrator","Student","Tutor"};
@@ -106,63 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requestsS.clear();
-                rejectedS.clear();
-                requestsT.clear();
-                rejectedT.clear();
-                for (DataSnapshot children : snapshot.getChildren()) {
-
-                    if (children.getKey().equals("Requests")) { // looking through requests
-                        if (children.hasChildren()) {
-                            for (DataSnapshot req : children.getChildren()) {
-                                if (req.getKey().equals("Tutor")){                   //finding tutors,if they exists and getting their username
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqTutor : req.getChildren()) {
-                                            String obj= reqTutor.getKey();
-                                            requestsT.add(obj);
-                                        }
-                                    }
-                                }else if(req.getKey().equals("Student")){//finding Students,if they exists and getting their username
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqStudent : req.getChildren()) {
-                                            String obj= reqStudent.getKey();
-                                            requestsS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }else if (children.getKey().equals("Rejected")) {// looking through rejected requests
-                        if (children.hasChildren()) {
-                            for (DataSnapshot rej : children.getChildren()) {
-                                if (rej.getKey().equals("Tutor")){//finding tutors,if they exists and getting their username
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejTutor : rej.getChildren()) {
-                                            String obj= rejTutor.getKey();
-                                            rejectedT.add(obj);
-                                        }
-                                    }
-                                }else if (rej.getKey().equals("Student")){//finding Students,if they exists and getting their username
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejStudent : rej.getChildren()) {
-                                            String obj= rejStudent.getKey();
-                                            rejectedS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+       db.listenToReqNames();
 
     }
 
@@ -179,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
         String username = uname.getText().toString().toLowerCase();
         String password =  pass.getText().toString();
         String usertype = utype.getSelectedItem().toString();               //  get all the values
-        boolean valid = false, first=false, found=false;
+        boolean valid = false, first=false;
+        int found;
         requestmsg.setText("");
 
         for (int i = 0; i < username.length(); i++) {
@@ -201,10 +145,20 @@ public class MainActivity extends AppCompatActivity {
             valid = false;
         }                              //checks if username is an email
         if (valid) {
-            found = adminlist(username,usertype);
-            username = username.replace(".", "@");
-            if (!found) {
-                getFirebase(usertype, username, password);
+            found = db.isPendingOrRejected(username,usertype);
+            String userUname = username.replace(".", "@");
+            if (found==0) {
+                getFirebase(usertype, userUname, password);
+            }else if (found == 1){
+                String msg = username+" is currently pending";
+                uname.setError(msg);
+                msg = "ACCESS ERROR!! "+username+" has not been approved by the Administrator yet";
+                requestmsg.setText(msg);
+            }else if (found == 2){
+                String msg = username+" has been rejected";
+                uname.setError(msg);
+                msg = "ACCESS ERROR!! "+username+" has not been rejected by the Administrator";
+                requestmsg.setText(msg);
             }
         }else{
             uname.setError("Invalid Email");              // if user does not put an email.
@@ -217,51 +171,6 @@ public class MainActivity extends AppCompatActivity {
      * @param requestmsg(TextView) is the view to show the user a message
      * @return found(Boolean) that is true if the user yet to be approved or was rejected
      */
-    public boolean adminlist(String usermail, String usertype){
-        String username = usermail.replace(".", "@");
-        boolean found=false;
-
-        if(usertype.equals("Student")) {
-            for (String request : requestsS) {
-                if (request.equals(username)) {
-                    found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has not been approved by the administrator yet";
-                    requestmsg.setText(msg);
-                    msg = usermail + " has not been approved";
-                    uname.setError(msg);
-                }
-            }
-            for (String rejects : rejectedS) {
-                if (rejects.equals(username)) {
-                    found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator. Please contact the administration at 693-345-2314";
-                    requestmsg.setText(msg);
-                    msg = usermail + " has been rejected";
-                    uname.setError(msg);
-                }
-            }
-        }else if (usertype.equals("Tutor")){
-            for (String request : requestsT) {
-                if (request.equals(username)) {
-                    found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has not been approved by the administrator yet";
-                    requestmsg.setText(msg);
-                    msg = usermail + " has not been approved";
-                    uname.setError(msg);
-                }
-            }
-            for (String rejects : rejectedT) {
-                if (rejects.equals(username)) {
-                    found = true;
-                    String msg = "ACCESS ERROR! " + usermail + " has been rejected by the administrator. Please contact the administration at 693-345-2314";
-                    requestmsg.setText(msg);
-                    msg = usermail + " has been rejected";
-                    uname.setError(msg);
-                }
-            }
-        }
-        return found;
-    }
 
     /* closes the main activity/program
      * @param view is the current view
@@ -274,23 +183,6 @@ public class MainActivity extends AppCompatActivity {
      * @param change user is the changed user class
      * @param Updatepass is true id the password is changed
      */
-    private void UpdateFirebase(User changeUser, boolean updatePass){
-
-        String username = changeUser.getUsername();
-        String userType = changeUser.getUserType();            //gets firebase username and type of the class
-
-        DatabaseReference tref;
-        if(userType.equals("Administrator")){
-            tref = otamsroot.child("Administrator").child(username);
-        }else {
-            tref = otamsroot.child("Users").child(userType).child(username.substring(0,1)).child(username.substring(1,2)).child(username);
-        }             //gets reference to the place where user data is stored
-
-        if(updatePass){
-            tref.child("password").setValue(changeUser.getPassword());
-        }
-        tref.child("info").setValue(changeUser); //sets the value of the user class and password
-    }
 
     private void getFirebase( String userType, String username, String password) {
         uname.setError(null);
