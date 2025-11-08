@@ -30,6 +30,9 @@ public class SigningUp extends AppCompatActivity {
 
 
     Spinner utype;
+    DatabaseReference otamsroot;
+
+    Database db;
     EditText emailGet, passwordGet, firstnamedGet, lastnameGet, phonenumGet, programOfStudyGet, highestDegreeGet, coursesOfferedGet;
     TextView majorError;
     // Layouts for conditional visibility
@@ -46,7 +49,7 @@ public class SigningUp extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        otamsroot = FirebaseDatabase.getInstance().getReference("otams");
         // Tutor only layout visibility
         // 1. Initialize layouts
         degreeLayoutSU = findViewById(R.id.degreeLayoutSU);
@@ -97,6 +100,8 @@ public class SigningUp extends AppCompatActivity {
         coursesOfferedGet = findViewById(R.id.coursesGSU);
         majorError= findViewById(R.id.errorMsgSU);
 
+        //Initialize the database control
+        db=new Database();
         //Set a listener that puts a message when password is being typed
         passwordGet.addTextChangedListener(new TextWatcher() {
             @Override
@@ -119,7 +124,7 @@ public class SigningUp extends AppCompatActivity {
      */
     protected void onStart() {
         super.onStart();
-
+        db.listenToReqNames();
     }
 
     /*
@@ -163,9 +168,8 @@ public class SigningUp extends AppCompatActivity {
         }
         // only try to send to firebase if everything is ok
         if (newU!=null) {
-
-            if(! Database.isPendingOrRejected(newU.getEmail(), newU.getUserType())) {
-                Database.newUser(newU, usertype);
+            if(db.isPendingOrRejected(newU.getEmail(), newU.getUserType())==0) {
+                newUserToFirebase(newU, usertype);
             } else {
                 String msg = "Username/email is already taken for " + newU.getEmail();
                 emailGet.setError(msg);
@@ -182,6 +186,52 @@ public class SigningUp extends AppCompatActivity {
     }
 
 
+    private void newUserToFirebase(User newUser, String userT){
 
+        String username = newUser.getUsername();
+        DatabaseReference tref;
+        tref = otamsroot.child("users").child(userT).child(username.substring(0,1)).child(username.substring(1,2));// makes a path based on the first two letter
+        tref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            //everything in the snapshot is done in sync, everything outside is async. calling values gotten here outside will have
+            //a nullpointer exeption
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    for (DataSnapshot children : snapshot.getChildren()) {
+                        if (children.getKey().compareTo(username) == 0) {
+                            throw new IllegalArgumentException("Username already exists. Use another email."); //checks if username exist so no overwrite occurs
+                        }
+                    }
+
+                    //tref.child(username).child("password").setValue(newUser.getPassword());
+                    otamsroot.child("Administrator").child("admin@mail@com").child("Requests").child(userT).child(username).setValue(newUser)
+                            .addOnSuccessListener(aVoid -> {
+                                // ✅ Show pending approval message
+                                android.widget.Toast.makeText(SigningUp.this,
+                                        "Your account approval is now pending. Please check back later.",
+                                        android.widget.Toast.LENGTH_LONG).show();
+                                // Optionally redirect to login screen
+                                android.content.Intent intent = new android.content.Intent(SigningUp.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                android.widget.Toast.makeText(SigningUp.this,
+                                        "Failed to submit your request: " + e.getMessage(),
+                                        android.widget.Toast.LENGTH_SHORT).show();
+                            });
+
+                }catch (IllegalArgumentException e) {
+                    String error = "Username/email is already taken for " + userT;
+                    majorError.setText(error);
+                    emailGet.setError(error);                                       // shows error if username already taken
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
 }

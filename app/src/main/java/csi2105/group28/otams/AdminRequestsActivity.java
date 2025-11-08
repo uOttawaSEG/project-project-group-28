@@ -32,7 +32,7 @@ public class AdminRequestsActivity extends AppCompatActivity {
     DatabaseReference otamsroot;
 
 
-    ArrayList<User> requestsS, rejectedS, requestsT, rejectedT;
+    Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +42,7 @@ public class AdminRequestsActivity extends AppCompatActivity {
         requestsContainer = findViewById(R.id.requestsContainer);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        requestsS = new ArrayList<User>();
-        rejectedS = new ArrayList<User>();
-        requestsT = new ArrayList<User>();
-        rejectedT = new ArrayList<User>();
-
+        db = new Database();
         adminRef = FirebaseDatabase.getInstance()
                 .getReference("otams/Administrator/admin@mail@com");
         loadRequests();
@@ -71,65 +67,7 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        otamsroot.child("Administrator").child("admin@mail@com").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                requestsS.clear();
-                rejectedS.clear();
-                requestsT.clear();
-                rejectedT.clear();
-                for (DataSnapshot children : snapshot.getChildren()) {
-
-                    if (children.getKey().equals("Requests")) {
-                        if (children.hasChildren()) {
-                            for (DataSnapshot req : children.getChildren()) {
-                                if (req.getKey().equals("Tutor")){
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqTutor : req.getChildren()) {
-                                            Tutor obj= reqTutor.getValue(Tutor.class);
-                                            requestsT.add(obj);
-                                        }
-                                    }
-                                }else if (req.getKey().equals("Student")){
-                                    if (req.hasChildren()) {
-                                        for (DataSnapshot reqStudent : req.getChildren()) {
-                                            Student obj= reqStudent.getValue(Student.class);
-                                            requestsS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }else if (children.getKey().equals("Rejected")) {
-                        if (children.hasChildren()) {
-                            for (DataSnapshot rej : children.getChildren()) {
-                                if (rej.getKey().equals("Tutor")){
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejTutor : rej.getChildren()) {
-                                            Tutor obj= rejTutor.getValue(Tutor.class);
-                                            rejectedT.add(obj);
-                                        }
-                                    }
-                                }else if (rej.getKey().equals("Student")){
-                                    if (rej.hasChildren()) {
-                                        for (DataSnapshot rejStudent : rej.getChildren()) {
-                                            Student obj= rejStudent.getValue(Student.class);
-                                            rejectedS.add(obj);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                requestsS.addAll(requestsT);
-                rejectedS.addAll(rejectedT);               // if we are using 1 listm concatenate all into S list
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        db.listenToReq();
     }
 
     @SuppressLint("SetTextI18n")
@@ -214,14 +152,14 @@ public class AdminRequestsActivity extends AppCompatActivity {
 
     private void loadRequests() {
         requestsContainer.removeAllViews();
-        for(User user : requestsS){
+        for(User user : db.getRequests()){
             requestsContainer.addView(createUserView(user, true, true));
         }
     }
 
     private void loadRejects() {
         requestsContainer.removeAllViews();
-        for(User user : rejectedS){
+        for(User user : db.getRejected()){
             requestsContainer.addView(createUserView(user, true, false));
         }
     }
