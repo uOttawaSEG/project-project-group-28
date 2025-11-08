@@ -298,7 +298,8 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference tref;
         if (userType.equals("Administrator")) {
             tref = otamsroot.child("Administrator").child(username);
-        } else {
+        }
+        else {
             tref = otamsroot.child("Users").child(userType).child(username.substring(0, 1)).child(username.substring(1, 2)).child(username);
         }                    //gets reference to the place where user data is stored
         tref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -323,7 +324,14 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, AdminRequestsActivity.class);
                         intent.putExtra("info", userdata);
                         startActivity(intent);
-                    } else {
+                    }
+                    else if(userType.equals("Tutor"))
+                    {
+                        Intent intent = new Intent(MainActivity.this, TutorAvailabilityActivity.class);
+                        intent.putExtra("info", userdata);
+                        startActivity(intent);
+                    }
+                    else {
                         Intent intent = new Intent(MainActivity.this, SignedIn.class);
                         intent.putExtra("info", userdata);               //go to signed in
                         startActivity(intent);

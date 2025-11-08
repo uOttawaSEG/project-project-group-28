@@ -7,7 +7,7 @@ public class Tutor extends User {
 
     private String highestDegree;
     private ArrayList<String> coursesOffered;
-    private List<AppointmentSlots> totalappointmentslots; // not implemented yet
+    private List<TutorAvailabilityActivity> totalappointmentslots; // not implemented yet
     private List<BookedAppointments> sessions; // not implemented yet
 
     // Empty constructor
