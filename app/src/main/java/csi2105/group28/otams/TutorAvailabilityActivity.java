@@ -287,6 +287,11 @@ public class TutorAvailabilityActivity extends AppCompatActivity
              Toast.makeText(TutorAvailabilityActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
              return;
          }
+        if (IsPastDate (date, start))
+        {
+            Toast.makeText(TutorAvailabilityActivity.this, "Date cannot be in the past", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         TutorAvailabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -332,9 +337,34 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         });
     }
 
+    private boolean IsPastDate(String date, String start)
+    {
+        try
+        {
+
+            String dateParts[] = date.split("-");
+            int year = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]);
+            int day = Integer.parseInt(dateParts[2]);
+
+            String timeParts[] = start.split(":");
+            int hour = Integer.parseInt(timeParts[0]);
+            int minute = Integer.parseInt(timeParts[1]);
+
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.set(year, month - 1, day, hour, minute, 0);
+            calendar.set(java.util.Calendar.MILLISECOND, 0);
+            return calendar.getTimeInMillis() < System.currentTimeMillis();
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
 
 
-            private boolean timeOverlap(String start, String end, String currentstart, String currentEnd)
+    private boolean timeOverlap(String start, String end, String currentstart, String currentEnd)
             {
                 try
                     {

@@ -1,15 +1,19 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/windowBackground">
+
 
     <LinearLayout
-        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/highestDegreeLabel"
@@ -17,133 +21,177 @@
             android:layout_height="wrap_content"
             android:text="Highest Degree:"
             android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:textSize="16sp"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:id="@+id/highestDegree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Loading..."
-            android:layout_marginBottom="16dp" />
-
-
-        <Spinner
-            android:id="@+id/courseSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <Button
-                android:id="@+id/pickDate"
-                android:layout_width="169dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/material_dynamic_tertiary50"
-                android:text="Pick date" />
-
-            <TextView
-                android:id="@+id/pickDateText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:paddingStart="8dp"/>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <Button
-                android:id="@+id/StartTimeInput"
-                android:layout_width="169dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/material_dynamic_tertiary50"
-                android:text="Pick start time" />
-
-            <TextView
-                android:id="@+id/StartTimeText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:paddingStart="8dp"/>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <Button
-                android:id="@+id/EndTimeInput"
-                android:layout_width="169dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/material_dynamic_tertiary50"
-                android:text="Pick end time" />
-
-            <TextView
-                android:id="@+id/EndTimeText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:paddingStart="8dp"/>
-        </LinearLayout>
-
-
-        <Button
-            android:id="@+id/AddButton"
-            android:text="Add Availability Slot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:backgroundTint="@color/material_dynamic_primary80"
-            android:textColor="@android:color/white"/>
-
-
-        <TextView
-            android:id="@+id/futureLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upcoming Sessions"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:textSize="16sp" />
-
-        <ListView
-            android:id="@+id/futureList"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:dividerHeight="2dp"
-            android:layout_marginBottom="16dp"/>
-
-
-        <TextView
-            android:id="@+id/pastLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Past Sessions"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:textSize="16sp" />
-
-        <ListView
-            android:id="@+id/pastList"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:dividerHeight="2dp"/>
-
+            android:textSize="16sp"
+            android:textColor="?android:textColorPrimary" />
     </LinearLayout>
-</ScrollView>
+
+
+    <Spinner
+        android:id="@+id/courseSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:spinnerMode="dropdown" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <Button
+                    android:id="@+id/pickDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:minWidth="90dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?android:attr/textColorPrimaryInverse" />
+
+                <TextView
+                    android:id="@+id/pickDateText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="--"
+                    android:textSize="16sp"
+                    android:textColor="?android:textColorPrimary"
+                    android:paddingStart="12dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <Button
+                    android:id="@+id/StartTimeInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start"
+                    android:minWidth="90dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?android:attr/textColorPrimaryInverse" />
+
+                <TextView
+                    android:id="@+id/StartTimeText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="--"
+                    android:textSize="16sp"
+                    android:textColor="?android:textColorPrimary"
+                    android:paddingStart="12dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="4dp">
+
+                <Button
+                    android:id="@+id/EndTimeInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="End"
+                    android:minWidth="90dp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?android:attr/textColorPrimaryInverse" />
+
+                <TextView
+                    android:id="@+id/EndTimeText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="--"
+                    android:textSize="16sp"
+                    android:textColor="?android:textColorPrimary"
+                    android:paddingStart="12dp" />
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/AddButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:text="Add Slot"
+                android:textColor="?android:attr/textColorPrimaryInverse" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/futureLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upcoming Sessions"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?android:textColorPrimary" />
+
+    <ListView
+        android:id="@+id/futureList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:background="?attr/colorSurface" />
+
+
+    <TextView
+        android:id="@+id/pastLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Past Sessions"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?android:textColorPrimary" />
+
+    <ListView
+        android:id="@+id/pastList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:background="?attr/colorSurface" />
+
+</LinearLayout>
