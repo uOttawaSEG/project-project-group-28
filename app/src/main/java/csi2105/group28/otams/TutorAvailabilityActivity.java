@@ -181,7 +181,6 @@ public class TutorAvailabilityActivity extends AppCompatActivity
             if (pos < slotKeys.size())
             {
                 deleteSlot(slotKeys.get(pos));
-                ;
             }
             return true;
         });
@@ -283,24 +282,95 @@ public class TutorAvailabilityActivity extends AppCompatActivity
             Toast.makeText(TutorAvailabilityActivity.this, "Times must be in 30 minute increments (e.g. 10:00, 10:30, 11:00)", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!EndtimeafterStarttime(start, end))
+         {
+             Toast.makeText(TutorAvailabilityActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
+             return;
+         }
 
-        String SlotID = UUID.randomUUID().toString();
-        Map<String, Object> slotData = new HashMap<>();
-        slotData.put("date", date);
-        slotData.put("start", start);
-        slotData.put("end", end);
-        slotData.put("Booked", false);
-        slotData.put("course", ChosenCourse);
+        TutorAvailabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String currentDate = dataSnapshot.child("date").getValue(String.class);
+                    String currentstart = dataSnapshot.child("start").getValue(String.class);
+                    String currentEnd = dataSnapshot.child("end").getValue(String.class);
 
-        TutorAvailabilityRef.child(SlotID).setValue(slotData).addOnSuccessListener(aVoid ->
-        {
-            Toast.makeText(TutorAvailabilityActivity.this, "Slot Added", Toast.LENGTH_SHORT).show();
-            dateInputText.setText("");
-            StartTimeText.setText("");
-            EndTimeText.setText("");
-        }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Method: AddSlot Error ", Toast.LENGTH_SHORT).show());
+                    if (currentDate == null || currentstart == null || currentEnd == null)
+                        continue;
 
+                    if (currentDate.equals(date)) {
+                        if (timeOverlap(start, end, currentstart, currentEnd)) {
+                            Toast.makeText(TutorAvailabilityActivity.this, "Time slot already exists or overlaps with another slot", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }
+
+
+                String SlotID = UUID.randomUUID().toString();
+                Map<String, Object> slotData = new HashMap<>();
+                slotData.put("date", date);
+                slotData.put("start", start);
+                slotData.put("end", end);
+                slotData.put("Booked", false);
+                slotData.put("course", ChosenCourse);
+
+                TutorAvailabilityRef.child(SlotID).setValue(slotData).addOnSuccessListener(aVoid ->
+                {
+                    Toast.makeText(TutorAvailabilityActivity.this, "Slot Added", Toast.LENGTH_SHORT).show();
+                    dateInputText.setText("");
+                    StartTimeText.setText("");
+                    EndTimeText.setText("");
+                }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Method: AddSlot Error ", Toast.LENGTH_SHORT).show());
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(TutorAvailabilityActivity.this, "Error checking slots", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
+
+            private boolean timeOverlap(String start, String end, String currentstart, String currentEnd)
+            {
+                try
+                    {
+                        int existingStart = Integer.parseInt(currentstart.replace(":", ""));
+                        int existingEnd = Integer.parseInt(currentEnd.replace(":", ""));
+                        int newStart = Integer.parseInt(start.replace(":", ""));
+                        int newEnd = Integer.parseInt(end.replace(":", ""));
+                        return newStart < existingEnd && newEnd > existingStart;
+
+                    }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            private boolean EndtimeafterStarttime(String start, String end)
+            {
+                try {
+
+
+                    String[] startParts = start.split(":");
+                    String[] endParts = end.split(":");
+                    int startHour = Integer.parseInt(startParts[0]);
+                    int startMinute = Integer.parseInt(startParts[1]);
+                    int endHour = Integer.parseInt(endParts[0]);
+                    int endMinute = Integer.parseInt(endParts[1]);
+                    return startHour < endHour || (startHour == endHour && startMinute < endMinute);
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+
+
+            }
 
     private boolean isValidTime(String time)
     {
@@ -383,4 +453,9 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         EndTimeText.setText(String.format("%02d:%02d", hourOfDay, minute));
     }
 }
+
+
+
+
+
 
