@@ -1,13 +1,18 @@
 package csi2105.group28.otams;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 
 
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.database.*;
 
@@ -20,9 +25,12 @@ import java.util.UUID;
 
 public class TutorAvailabilityActivity extends AppCompatActivity
 {
-    private EditText dateInput;
-    private EditText StartTimeInput;
-    private EditText EndTimeInput;
+    private Button dateInput;
+    private Button StartTimeInput;
+    private Button EndTimeInput;
+    private TextView dateInputText;
+    private TextView StartTimeText;
+    private TextView EndTimeText;
 
     private Button AddButton;
 
@@ -75,9 +83,45 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         TutorInfoRef = FirebaseDatabase.getInstance().getReference("otams").child("Users").child("Tutor").child(Tutorusername.substring(0, 1)).child(Tutorusername.substring(1, 2)).child(Tutorusername).child("info");
 
 
-        dateInput = findViewById(R.id.dateInput);
+        dateInput = findViewById(R.id.pickDate);
+
+        dateInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePicker mDatePickerDialogFragment;
+                mDatePickerDialogFragment = new DatePicker();
+                mDatePickerDialogFragment.show(getSupportFragmentManager(), "Appointement Date");
+            }
+        });
+        dateInputText = findViewById(R.id.pickDateText);
+
         StartTimeInput = findViewById(R.id.StartTimeInput);
+
+        StartTimeInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePicker mTimePickerDialogFragment;
+                mTimePickerDialogFragment = new TimePicker();
+                mTimePickerDialogFragment.isStartTimePicker = true;
+                mTimePickerDialogFragment.show(getSupportFragmentManager(), "Start Time");
+            }
+        });
+        StartTimeText = findViewById(R.id.StartTimeText);
+
         EndTimeInput = findViewById(R.id.EndTimeInput);
+
+        EndTimeInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePicker mTimePickerDialogFragment;
+                mTimePickerDialogFragment = new TimePicker();
+                mTimePickerDialogFragment.isEndTimePicker = true;
+                mTimePickerDialogFragment.show(getSupportFragmentManager(), "End Time");
+            }
+        });
+
+        EndTimeText = findViewById(R.id.EndTimeText);
+
         AddButton = findViewById(R.id.AddButton);
         SlotList = findViewById(R.id.SlotList);
         highestDegree = findViewById(R.id.highestDegree);
@@ -156,9 +200,9 @@ public class TutorAvailabilityActivity extends AppCompatActivity
     }
     private void AddSlot()
     {
-        String date = dateInput.getText().toString();
-        String start = StartTimeInput.getText().toString();
-        String end = EndTimeInput.getText().toString();
+        String date = dateInputText.getText().toString();
+        String start = StartTimeText.getText().toString();
+        String end = EndTimeText.getText().toString();
 
         if (date.isEmpty() || start.isEmpty() || end.isEmpty())
         {
@@ -181,9 +225,9 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         TutorAvailabilityRef.child(SlotID).setValue(slotData).addOnSuccessListener(aVoid ->
         {
             Toast.makeText(TutorAvailabilityActivity.this, "Slot Added", Toast.LENGTH_SHORT).show();
-            dateInput.setText("");
-            StartTimeInput.setText("");
-            EndTimeInput.setText("");
+            dateInputText.setText("");
+            StartTimeText.setText("");
+            EndTimeText.setText("");
         }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Mehtod: AddSlot Error ", Toast.LENGTH_SHORT).show());
 
     }
@@ -254,6 +298,16 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Deleting Slot Mehtod: deleteSlot Error ", Toast.LENGTH_SHORT).show());
     }
 
+    public void setDate(int year, int month, int dayOfMonth) {
+        dateInputText.setText(year + "-" + month + "-" + dayOfMonth);
+    }
 
+    public void setStartTime(int hourOfDay, int minute) {
+        StartTimeText.setText(hourOfDay + ":" + minute);
+    }
 
+    public void setEndTime(int hourOfDay, int minute) {
+        EndTimeText.setText(hourOfDay + ":" + minute);
+    }
 }
+

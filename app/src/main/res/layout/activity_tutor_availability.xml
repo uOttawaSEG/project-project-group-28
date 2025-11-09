@@ -24,23 +24,71 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
-    <EditText
-        android:id="@+id/dateInput"
-        android:hint="Date (e.g. 2025-11-09)"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/StartTimeInput"
-        android:hint="Start Time (e.g. 10:00)"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/EndTimeInput"
-        android:hint="End Time (e.g. 11:00)"
+        <Button
+            android:id="@+id/pickDate"
+            android:layout_width="169dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/material_dynamic_tertiary50"
+            android:text="Pick date" />
+
+        <TextView
+            android:id="@+id/pickDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="textEnd" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/StartTimeInput"
+            android:layout_width="169dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/material_dynamic_tertiary50"
+            android:text="Pick start time" />
+
+        <TextView
+            android:id="@+id/StartTimeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="textEnd" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/EndTimeInput"
+            android:layout_width="169dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/material_dynamic_tertiary50"
+            android:text="Pick end time" />
+
+        <TextView
+            android:id="@+id/EndTimeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="textEnd" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="69px" />
 
     <Button
         android:id="@+id/AddButton"
