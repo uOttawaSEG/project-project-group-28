@@ -7,17 +7,13 @@
     android:padding="12dp"
     android:background="?android:attr/windowBackground">
 
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="16dp" />
-
+    <!-- highest degree -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/highestDegreeLabel"
@@ -38,7 +34,7 @@
             android:textColor="?android:textColorPrimary" />
     </LinearLayout>
 
-
+    <!-- spinner for course -->
     <Spinner
         android:id="@+id/courseSpinner"
         android:layout_width="match_parent"
@@ -46,7 +42,7 @@
         android:layout_marginBottom="12dp"
         android:spinnerMode="dropdown" />
 
-
+    <!-- date and time pickers -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +53,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
+            <!-- date -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +82,7 @@
                     android:paddingStart="12dp" />
             </LinearLayout>
 
-
+            <!-- start time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +111,7 @@
                     android:paddingStart="12dp" />
             </LinearLayout>
 
-
+            <!-- end time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,7 +140,32 @@
                     android:paddingStart="12dp" />
             </LinearLayout>
 
+            <!-- auto approve slots toggle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="6dp"
+                android:layout_marginTop="6dp">
 
+                <TextView
+                    android:id="@+id/autoApproveLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Auto-approve session requests"
+                    android:textSize="16sp"
+                    android:textColor="?android:textColorPrimary" />
+
+                <Switch
+                    android:id="@+id/autoApproveSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true" />
+            </LinearLayout>
+
+            <!-- add slot button -->
             <Button
                 android:id="@+id/AddButton"
                 android:layout_width="wrap_content"
@@ -154,11 +175,10 @@
                 android:backgroundTint="?attr/colorPrimary"
                 android:text="Add Slot"
                 android:textColor="?android:attr/textColorPrimaryInverse" />
-
         </LinearLayout>
     </ScrollView>
 
-
+    <!-- view upcoming sessions -->
     <TextView
         android:id="@+id/futureLabel"
         android:layout_width="match_parent"
@@ -178,7 +198,27 @@
         android:dividerHeight="2dp"
         android:background="?attr/colorSurface" />
 
+    <!-- pending approvals -->
+    <TextView
+        android:id="@+id/pendingLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pending Approvals"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?android:textColorPrimary" />
 
+    <ListView
+        android:id="@+id/pendingList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:background="?attr/colorSurface" />
+
+    <!-- past sessions -->
     <TextView
         android:id="@+id/pastLabel"
         android:layout_width="match_parent"

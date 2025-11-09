@@ -1,491 +1,352 @@
 package csi2105.group28.otams;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
-
-
-
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-
 import com.google.firebase.database.*;
+import java.util.*;
 
+public class TutorAvailabilityActivity extends AppCompatActivity {
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-public class TutorAvailabilityActivity extends AppCompatActivity
-{
-    private Button dateInput;
-    private Button StartTimeInput;
-    private Button EndTimeInput;
-    private TextView dateInputText;
-    private TextView StartTimeText;
-    private TextView EndTimeText;
-
-    private Button AddButton;
-
+    private Button dateInput, startTimeInput, endTimeInput, addButton;
+    private TextView dateInputText, startTimeText, endTimeText, highestDegree;
     private Spinner courseSpinner;
-
-    private TextView highestDegree;
-
-    private ArrayAdapter<String> TutorSlotAdapter;
-    private ArrayAdapter<String> courseAdapter;
-    private ArrayAdapter<String> futureslotAdapter;
-    private ArrayAdapter<String> pastslotAdapter;
-
-
+    private Switch autoApproveSwitch;
+    private ListView futureList, pendingList, pastList;
+    private ArrayAdapter<String> courseAdapter, futureAdapter, pendingAdapter, pastAdapter;
     private ArrayList<String> courseList = new ArrayList<>();
-    private ArrayList<String> TutorSlotDisplay = new ArrayList<>();
+    private ArrayList<String> futureSlots = new ArrayList<>();
+    private ArrayList<String> pendingSlots = new ArrayList<>();
+    private ArrayList<String> pastSlots = new ArrayList<>();
     private ArrayList<String> slotKeys = new ArrayList<>();
-    private ArrayList<String> upcomingslots = new ArrayList<>();
-    private ArrayList<String> pastslots = new ArrayList<>();
+    private DatabaseReference availabilityRef, tutorInfoRef, sessionRequestsRef;
 
-
-
-
-    private ListView SlotList;
-    private ListView FutureSlotList;
-    private ListView PastSlotList;
-
-
-
-    private DatabaseReference TutorAvailabilityRef;
-    private DatabaseReference TutorInfoRef;
-
-    private String Tutorusername;
-    private String TutorFirstname;
-    private String TutorLastname;
-    private String ChosenCourse;
-
-
+    private String tutorUsername, tutorFirstName, tutorLastName, chosenCourse;
 
     @SuppressLint("MissingInflatedId")
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_availability);
 
         Tutor tutor = (Tutor) getIntent().getSerializableExtra("info");
-
-        if (tutor != null)
-        {
-            Tutorusername = removeperiods(tutor.getUsername());
-        }
-        else
-        {
+        if (tutor != null) {
+            tutorUsername = removePeriods(tutor.getUsername());
+        } else {
             Toast.makeText(this, "Tutor object is null", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-
-        TutorAvailabilityRef = FirebaseDatabase.getInstance().getReference("otams").child("Availability").child(Tutorusername);
-        TutorInfoRef = FirebaseDatabase.getInstance().getReference("otams").child("Users").child("Tutor").child(Tutorusername.substring(0, 1)).child(Tutorusername.substring(1, 2)).child(Tutorusername).child("info");
-
+        availabilityRef = FirebaseDatabase.getInstance().getReference("otams/Availability").child(tutorUsername);
+        tutorInfoRef = FirebaseDatabase.getInstance().getReference("otams/Users/Tutor")
+                .child(tutorUsername.substring(0,1))
+                .child(tutorUsername.substring(1,2))
+                .child(tutorUsername)
+                .child("info");
 
         dateInput = findViewById(R.id.pickDate);
-
-        dateInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePicker mDatePickerDialogFragment;
-                mDatePickerDialogFragment = new DatePicker();
-                mDatePickerDialogFragment.show(getSupportFragmentManager(), "Appointement Date");
-            }
-        });
         dateInputText = findViewById(R.id.pickDateText);
-
-        StartTimeInput = findViewById(R.id.StartTimeInput);
-
-        StartTimeInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePicker mTimePickerDialogFragment;
-                mTimePickerDialogFragment = new TimePicker();
-                mTimePickerDialogFragment.isStartTimePicker = true;
-                mTimePickerDialogFragment.show(getSupportFragmentManager(), "Start Time");
-            }
-        });
-        StartTimeText = findViewById(R.id.StartTimeText);
-
-        EndTimeInput = findViewById(R.id.EndTimeInput);
-
-        EndTimeInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePicker mTimePickerDialogFragment;
-                mTimePickerDialogFragment = new TimePicker();
-                mTimePickerDialogFragment.isEndTimePicker = true;
-                mTimePickerDialogFragment.show(getSupportFragmentManager(), "End Time");
-            }
-        });
-
-        EndTimeText = findViewById(R.id.EndTimeText);
-
-        AddButton = findViewById(R.id.AddButton);
-
-        FutureSlotList = findViewById(R.id.futureList);
-        PastSlotList = findViewById(R.id.pastList);
-
-        highestDegree = findViewById(R.id.highestDegree);
+        startTimeInput = findViewById(R.id.StartTimeInput);
+        startTimeText = findViewById(R.id.StartTimeText);
+        endTimeInput = findViewById(R.id.EndTimeInput);
+        endTimeText = findViewById(R.id.EndTimeText);
+        addButton = findViewById(R.id.AddButton);
         courseSpinner = findViewById(R.id.courseSpinner);
+        autoApproveSwitch = findViewById(R.id.autoApproveSwitch);
+        highestDegree = findViewById(R.id.highestDegree);
+
+        futureList = findViewById(R.id.futureList);
+        pendingList = findViewById(R.id.pendingList);
+        pastList = findViewById(R.id.pastList);
 
         courseAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courseList);
         courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         courseSpinner.setAdapter(courseAdapter);
 
+        futureAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, futureSlots);
+        pendingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pendingSlots);
+        pastAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pastSlots);
 
-        loadTutorInfo(TutorInfoRef);
+        futureList.setAdapter(futureAdapter);
+        pendingList.setAdapter(pendingAdapter);
+        pastList.setAdapter(pastAdapter);
 
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        loadTutorInfo();
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                ChosenCourse = courseList.get(position);
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-                ChosenCourse = "";
-            }
+        // date picker
+        dateInput.setOnClickListener(v -> {
+            DatePicker picker = new DatePicker();
+            picker.show(getSupportFragmentManager(), "datePicker");
         });
 
+        // start time picker
+        startTimeInput.setOnClickListener(v -> {
+            TimePicker picker = new TimePicker();
+            picker.isStartTimePicker = true;
+            picker.show(getSupportFragmentManager(), "startTimePicker");
+        });
 
+        // end time picker
+        endTimeInput.setOnClickListener(v -> {
+            TimePicker picker = new TimePicker();
+            picker.isEndTimePicker = true;
+            picker.show(getSupportFragmentManager(), "endTimePicker");
+        });
 
-        futureslotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, upcomingslots);
-        pastslotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pastslots);
+        addButton.setOnClickListener(v -> addSlot());
 
+        // load slots
+        loadSlots();
 
-        FutureSlotList.setAdapter(futureslotAdapter);
-        PastSlotList.setAdapter(pastslotAdapter);
+        // be able to click on the upcoming sessions
+        futureList.setOnItemClickListener((parent, view, position, id) -> {
+            String key = slotKeys.get(position);
+            showUpcomingSessionDialog(key);
+        });
 
-        SlotLoader();
-
-        AddButton.setOnClickListener(v -> AddSlot());
-
-        FutureSlotList.setOnItemLongClickListener((adapterView, view, pos, l) ->
-        {
-            if (pos < slotKeys.size())
-            {
-                deleteSlot(slotKeys.get(pos));
-            }
+        // click to delete available slot
+        futureList.setOnItemLongClickListener((parent, view, position, id) -> {
+            String key = slotKeys.get(position);
+            deleteSlot(key);
             return true;
         });
 
+        // ability to tap on pending requests
+        pendingList.setOnItemClickListener((parent, view, position, id) -> {
+            String key = slotKeys.get(position);
+            showPendingSessionDialog(key);
+        });
     }
-    private String removeperiods(String username) // May be redundant
-    {
-        if (username == null)
-        {
-            return "";
-        }
+
+    private String removePeriods(String username) {
+        if (username == null) return "";
         return username.replace(".", "");
     }
-    private void SlotLoader() {
-        TutorAvailabilityRef.addValueEventListener(new ValueEventListener()
-        {
+
+    private void loadTutorInfo() {
+        tutorInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                upcomingslots.clear();
-                pastslots.clear();
-                slotKeys.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String key = dataSnapshot.getKey();
-                    String date = dataSnapshot.child("date").getValue(String.class);
-                    String start = dataSnapshot.child("start").getValue(String.class);
-                    String end = dataSnapshot.child("end").getValue(String.class);
-                    String course = dataSnapshot.child("course").getValue(String.class); // read stored course
-                    boolean Booked = Boolean.TRUE.equals(dataSnapshot.child("Booked").getValue(Boolean.class));
-                    if (course == null) course = "Unknown Course";
-                    if (date == null) date = "Unknown Date";
-                    if (start == null) start = "Unknown Start Time";
-                    if (end == null) end = " Unknown End Time";
-                    {
-                        String slot = "Tutor: " + TutorFirstname + " " + TutorLastname + " |  Course: " + course + " | Date: " + date + " | Start time: " + start + " | End time: " + end + " | Status: " + (Booked ? "Booked" : "Available");
-                        TutorSlotDisplay.add(slot);
-
-                        if (pastSessionCheck(date, end))
-                        {
-                            pastslots.add(slot);
-                        }
-                        else
-                        {
-                            upcomingslots.add(slot);
-
-                        }
-                        slotKeys.add(key);
-                    }
-                }
-                futureslotAdapter.notifyDataSetChanged();
-                pastslotAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error)
-            {
-                Toast.makeText(TutorAvailabilityActivity.this, "Error Loading slots", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean pastSessionCheck(String date, String endTime)
-    {
-        try
-        {
-           String dateParts[] = date.split("-");
-           int year = Integer.parseInt(dateParts[0]);
-           int month = Integer.parseInt(dateParts[1]);
-           int day = Integer.parseInt(dateParts[2]);
-
-           String timeParts[] = endTime.split(":");
-           int hour = Integer.parseInt(timeParts[0]);
-           int minute = Integer.parseInt(timeParts[1]);
-
-           java.util.Calendar calendar = java.util.Calendar.getInstance();
-           calendar.set(year, month - 1, day, hour, minute, 0);
-           calendar.set(java.util.Calendar.MILLISECOND, 0);
-           return calendar.getTimeInMillis() < System.currentTimeMillis();
-
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-    }
-
-    private void AddSlot()
-    {
-        String date = dateInputText.getText().toString();
-        String start = StartTimeText.getText().toString();
-        String end = EndTimeText.getText().toString();
-
-        if (date.isEmpty() || start.isEmpty() || end.isEmpty())
-        {
-            Toast.makeText(TutorAvailabilityActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!isValidTime(start) || !isValidTime(end))
-        {
-            Toast.makeText(TutorAvailabilityActivity.this, "Times must be in 30 minute increments (e.g. 10:00, 10:30, 11:00)", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!EndtimeafterStarttime(start, end))
-         {
-             Toast.makeText(TutorAvailabilityActivity.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
-             return;
-         }
-        if (IsPastDate (date, start))
-        {
-            Toast.makeText(TutorAvailabilityActivity.this, "Date cannot be in the past", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        TutorAvailabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String currentDate = dataSnapshot.child("date").getValue(String.class);
-                    String currentstart = dataSnapshot.child("start").getValue(String.class);
-                    String currentEnd = dataSnapshot.child("end").getValue(String.class);
-
-                    if (currentDate == null || currentstart == null || currentEnd == null)
-                        continue;
-
-                    if (currentDate.equals(date)) {
-                        if (timeOverlap(start, end, currentstart, currentEnd)) {
-                            Toast.makeText(TutorAvailabilityActivity.this, "Time slot already exists or overlaps with another slot", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                }
-
-
-                String SlotID = UUID.randomUUID().toString();
-                Map<String, Object> slotData = new HashMap<>();
-                slotData.put("date", date);
-                slotData.put("start", start);
-                slotData.put("end", end);
-                slotData.put("Booked", false);
-                slotData.put("course", ChosenCourse);
-
-                TutorAvailabilityRef.child(SlotID).setValue(slotData).addOnSuccessListener(aVoid ->
-                {
-                    Toast.makeText(TutorAvailabilityActivity.this, "Slot Added", Toast.LENGTH_SHORT).show();
-                    dateInputText.setText("");
-                    StartTimeText.setText("");
-                    EndTimeText.setText("");
-                }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Method: AddSlot Error ", Toast.LENGTH_SHORT).show());
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(TutorAvailabilityActivity.this, "Error checking slots", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean IsPastDate(String date, String start)
-    {
-        try
-        {
-
-            String dateParts[] = date.split("-");
-            int year = Integer.parseInt(dateParts[0]);
-            int month = Integer.parseInt(dateParts[1]);
-            int day = Integer.parseInt(dateParts[2]);
-
-            String timeParts[] = start.split(":");
-            int hour = Integer.parseInt(timeParts[0]);
-            int minute = Integer.parseInt(timeParts[1]);
-
-            java.util.Calendar calendar = java.util.Calendar.getInstance();
-            calendar.set(year, month - 1, day, hour, minute, 0);
-            calendar.set(java.util.Calendar.MILLISECOND, 0);
-            return calendar.getTimeInMillis() < System.currentTimeMillis();
-
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-    }
-
-
-    private boolean timeOverlap(String start, String end, String currentstart, String currentEnd)
-            {
-                try
-                    {
-                        int existingStart = Integer.parseInt(currentstart.replace(":", ""));
-                        int existingEnd = Integer.parseInt(currentEnd.replace(":", ""));
-                        int newStart = Integer.parseInt(start.replace(":", ""));
-                        int newEnd = Integer.parseInt(end.replace(":", ""));
-                        return newStart < existingEnd && newEnd > existingStart;
-
-                    }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            private boolean EndtimeafterStarttime(String start, String end)
-            {
-                try {
-
-
-                    String[] startParts = start.split(":");
-                    String[] endParts = end.split(":");
-                    int startHour = Integer.parseInt(startParts[0]);
-                    int startMinute = Integer.parseInt(startParts[1]);
-                    int endHour = Integer.parseInt(endParts[0]);
-                    int endMinute = Integer.parseInt(endParts[1]);
-                    return startHour < endHour || (startHour == endHour && startMinute < endMinute);
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
-
-
-            }
-
-    private boolean isValidTime(String time)
-    {
-        if (!time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$" ))
-        {
-        return false;
-    }
-        try
-        {
-            {
-                String[] Timeparts = time.split(":");
-                int minutes =  Integer.parseInt(Timeparts[1]);
-                return minutes % 30 == 0;
-            }
-        } catch (Exception e) {
-            throw new NumberFormatException();
-        }
-    }
-
-    private void loadTutorInfo(DatabaseReference tutorInfoReference)
-    {
-        tutorInfoReference.addListenerForSingleValueEvent(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot)
-            {
-                TutorFirstname = snapshot.child("firstName").getValue(String.class);
-                TutorLastname = snapshot.child("lastName").getValue(String.class);
+                tutorFirstName = snapshot.child("firstName").getValue(String.class);
+                tutorLastName = snapshot.child("lastName").getValue(String.class);
 
                 String degree = snapshot.child("highestDegree").getValue(String.class);
                 highestDegree.setText(degree != null ? degree : "No Degree");
 
-
                 courseList.clear();
-                if (snapshot.child("coursesOffered").exists())
-                {
-                    for (DataSnapshot courseSnapshot : snapshot.child("coursesOffered").getChildren())
-                    {
-                        String course = courseSnapshot.getValue(String.class);
+                if (snapshot.child("coursesOffered").exists()) {
+                    for (DataSnapshot courseSnap : snapshot.child("coursesOffered").getChildren()) {
+                        String course = courseSnap.getValue(String.class);
                         if (course != null) courseList.add(course);
                     }
                 }
+                if (!courseList.isEmpty()) chosenCourse = courseList.get(0);
+                if (courseList.isEmpty()) courseList.add("No courses offered");
 
-                if (!courseList.isEmpty()) {
-                    ChosenCourse = courseList.get(0);
-                }
-                if (courseList.isEmpty()) {
-                    courseList.add("No courses offered");
-                }
                 courseAdapter.notifyDataSetChanged();
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error)
-            {
-                Toast.makeText(TutorAvailabilityActivity.this, "Error Loading Tutor Info : Issue from: loadTutorInfo", Toast.LENGTH_SHORT).show();
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    private void deleteSlot(String key)
-    {
-        TutorAvailabilityRef.child(key).removeValue().addOnSuccessListener(aVoid ->
-        {
-            Toast.makeText(TutorAvailabilityActivity.this, "Slot Deleted", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Deleting Slot Mehtod: deleteSlot Error ", Toast.LENGTH_SHORT).show());
+    private void addSlot() {
+        String date = dateInputText.getText().toString();
+        String start = startTimeText.getText().toString();
+        String end = endTimeText.getText().toString();
+        chosenCourse = (String) courseSpinner.getSelectedItem();
+        boolean autoApprove = autoApproveSwitch.isChecked();
+
+        if (date.isEmpty() || start.isEmpty() || end.isEmpty() || chosenCourse == null) {
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isValidTime(start) || !isValidTime(end) || !endAfterStart(start, end) || isPastDate(date, start)) {
+            Toast.makeText(this, "Invalid time or past date", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // check if time overlap
+        availabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    String existingDate = snap.child("date").getValue(String.class);
+                    String existingStart = snap.child("start").getValue(String.class);
+                    String existingEnd = snap.child("end").getValue(String.class);
+                    if (existingDate != null && existingStart != null && existingEnd != null &&
+                            existingDate.equals(date) && timeOverlap(start, end, existingStart, existingEnd)) {
+                        Toast.makeText(TutorAvailabilityActivity.this, "Slot overlaps existing slot", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                String key = availabilityRef.push().getKey();
+                Map<String, Object> slot = new HashMap<>();
+                slot.put("date", date);
+                slot.put("start", start);
+                slot.put("end", end);
+                slot.put("course", chosenCourse);
+                slot.put("Booked", false);
+                slot.put("autoApprove", autoApprove);
+
+                Map<String, Object> studentInfo = new HashMap<>();
+                studentInfo.put("name", "");
+                studentInfo.put("email", "");
+                studentInfo.put("phone", "");
+                studentInfo.put("studies", "");
+                slot.put("studentInfo", studentInfo);
+
+                if (key != null) availabilityRef.child(key).setValue(slot);
+                dateInputText.setText(""); startTimeText.setText(""); endTimeText.setText("");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
-    @SuppressLint("SetTextI18n")
-    public void setDate(int year, int month, int dayOfMonth) {
-        dateInputText.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
+    private void loadSlots() {
+        availabilityRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                futureSlots.clear(); pendingSlots.clear(); pastSlots.clear(); slotKeys.clear();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    String key = snap.getKey();
+                    String date = snap.child("date").getValue(String.class);
+                    String start = snap.child("start").getValue(String.class);
+                    String end = snap.child("end").getValue(String.class);
+                    boolean booked = Boolean.TRUE.equals(snap.child("Booked").getValue(Boolean.class));
+                    boolean autoApprove = Boolean.TRUE.equals(snap.child("autoApprove").getValue(Boolean.class));
+                    Map<String, Object> studentInfo = (Map<String, Object>) snap.child("studentInfo").getValue();
+
+                    String studentName = studentInfo != null ? (String) studentInfo.get("name") : "";
+                    String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "";
+                    String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "";
+                    String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "";
+
+                    String slotText = "Course: " + (snap.child("course").getValue(String.class) != null ? snap.child("course").getValue(String.class) : "N/A")
+                            + " | Date: " + date + " | Start: " + start + " | End: " + end
+                            + " | Status: " + (booked ? "Booked" : "Available");
+
+                    if (booked) {
+                        futureSlots.add(slotText);
+                    } else if (!booked && !autoApprove) {
+                        pendingSlots.add(slotText);
+                    } else {
+                        pastSlots.add(slotText);
+                    }
+
+                    slotKeys.add(key);
+                }
+                futureAdapter.notifyDataSetChanged();
+                pendingAdapter.notifyDataSetChanged();
+                pastAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
-    @SuppressLint("DefaultLocale")
-    public void setStartTime(int hourOfDay, int minute) {
-        StartTimeText.setText(String.format("%02d:%02d", hourOfDay, minute));
+    private void showPendingSessionDialog(String key) {
+        availabilityRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snap) {
+                Map<String, Object> studentInfo = (Map<String, Object>) snap.child("studentInfo").getValue();
+                String studentName = studentInfo != null ? (String) studentInfo.get("name") : "N/A";
+                String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "N/A";
+                String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "N/A";
+                String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "N/A";
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(TutorAvailabilityActivity.this);
+                builder.setTitle("Pending Request")
+                        .setMessage("Student: " + studentName + "\nEmail: " + studentEmail + "\nPhone: " + studentPhone + "\nStudies: " + studentStudies)
+                        .setPositiveButton("Approve", (dialog, which) -> {
+                            availabilityRef.child(key).child("Booked").setValue(true);
+                            Toast.makeText(TutorAvailabilityActivity.this, "Approved", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Reject", (dialog, which) -> {
+                            availabilityRef.child(key).removeValue();
+                            Toast.makeText(TutorAvailabilityActivity.this, "Rejected", Toast.LENGTH_SHORT).show();
+                        }).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
-    @SuppressLint("DefaultLocale")
-    public void setEndTime(int hourOfDay, int minute) {
-        EndTimeText.setText(String.format("%02d:%02d", hourOfDay, minute));
+    private void showUpcomingSessionDialog(String key) {
+        availabilityRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snap) {
+                Map<String, Object> studentInfo = (Map<String, Object>) snap.child("studentInfo").getValue();
+                String studentName = studentInfo != null ? (String) studentInfo.get("name") : "N/A";
+                String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "N/A";
+                String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "N/A";
+                String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "N/A";
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(TutorAvailabilityActivity.this);
+                builder.setTitle("Upcoming Session")
+                        .setMessage("Student: " + studentName + "\nEmail: " + studentEmail + "\nPhone: " + studentPhone + "\nStudies: " + studentStudies)
+                        .setPositiveButton("Cancel Session", (dialog, which) -> {
+                            availabilityRef.child(key).child("Booked").setValue(false);
+                            availabilityRef.child(key).child("studentInfo").setValue(new HashMap<>());
+                            Toast.makeText(TutorAvailabilityActivity.this, "Session Cancelled", Toast.LENGTH_SHORT).show();
+                        }).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
+
+    private void deleteSlot(String key) {
+        availabilityRef.child(key).removeValue();
+        Toast.makeText(this, "Slot deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    // Time helpers
+    private boolean isValidTime(String time) {
+        if (!time.matches("^([01]?\\d|2[0-3]):[0-5]\\d$")) return false;
+        String[] parts = time.split(":");
+        int minutes = Integer.parseInt(parts[1]);
+        return minutes % 30 == 0;
+    }
+
+    private boolean endAfterStart(String start, String end) {
+        String[] s = start.split(":"); String[] e = end.split(":");
+        int startH = Integer.parseInt(s[0]), startM = Integer.parseInt(s[1]);
+        int endH = Integer.parseInt(e[0]), endM = Integer.parseInt(e[1]);
+        return endH > startH || (endH == startH && endM > startM);
+    }
+
+    private boolean isPastDate(String date, String time) {
+        try {
+            String[] d = date.split("-");
+            int y = Integer.parseInt(d[0]), m = Integer.parseInt(d[1]) - 1, day = Integer.parseInt(d[2]);
+            String[] t = time.split(":"); int h = Integer.parseInt(t[0]), min = Integer.parseInt(t[1]);
+            Calendar cal = Calendar.getInstance();
+            cal.set(y, m, day, h, min, 0);
+            return cal.getTimeInMillis() < System.currentTimeMillis();
+        } catch (Exception e) { return false; }
+    }
+
+    private boolean timeOverlap(String s1, String e1, String s2, String e2) {
+        int start1 = Integer.parseInt(s1.replace(":", ""));
+        int end1 = Integer.parseInt(e1.replace(":", ""));
+        int start2 = Integer.parseInt(s2.replace(":", ""));
+        int end2 = Integer.parseInt(e2.replace(":", ""));
+        return start1 < end2 && end1 > start2;
+    }
+
+    // methods that are called by DatePicker and TimePicker fragments
+    public void setDate(int y, int m, int d) { dateInputText.setText(y + "-" + (m + 1) + "-" + d); }
+    public void setStartTime(int h, int m) { startTimeText.setText(String.format("%02d:%02d", h, m)); }
+    public void setEndTime(int h, int m) { endTimeText.setText(String.format("%02d:%02d", h, m)); }
 }
-
-
-
-
-
-
