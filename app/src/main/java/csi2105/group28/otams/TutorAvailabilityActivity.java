@@ -40,12 +40,23 @@ public class TutorAvailabilityActivity extends AppCompatActivity
 
     private ArrayAdapter<String> TutorSlotAdapter;
     private ArrayAdapter<String> courseAdapter;
+    private ArrayAdapter<String> futureslotAdapter;
+    private ArrayAdapter<String> pastslotAdapter;
+
 
     private ArrayList<String> courseList = new ArrayList<>();
     private ArrayList<String> TutorSlotDisplay = new ArrayList<>();
     private ArrayList<String> slotKeys = new ArrayList<>();
+    private ArrayList<String> upcomingslots = new ArrayList<>();
+    private ArrayList<String> pastslots = new ArrayList<>();
+
+
+
 
     private ListView SlotList;
+    private ListView FutureSlotList;
+    private ListView PastSlotList;
+
 
 
     private DatabaseReference TutorAvailabilityRef;
@@ -123,7 +134,10 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         EndTimeText = findViewById(R.id.EndTimeText);
 
         AddButton = findViewById(R.id.AddButton);
-        SlotList = findViewById(R.id.SlotList);
+
+        FutureSlotList = findViewById(R.id.futureList);
+        PastSlotList = findViewById(R.id.pastList);
+
         highestDegree = findViewById(R.id.highestDegree);
         courseSpinner = findViewById(R.id.courseSpinner);
 
@@ -151,17 +165,27 @@ public class TutorAvailabilityActivity extends AppCompatActivity
 
 
 
-        TutorSlotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, TutorSlotDisplay);
-        SlotList.setAdapter(TutorSlotAdapter);
+        futureslotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, upcomingslots);
+        pastslotAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pastslots);
+
+
+        FutureSlotList.setAdapter(futureslotAdapter);
+        PastSlotList.setAdapter(pastslotAdapter);
+
         SlotLoader();
 
         AddButton.setOnClickListener(v -> AddSlot());
 
-        SlotList.setOnItemLongClickListener((adapterView, view, pos, l) ->
+        FutureSlotList.setOnItemLongClickListener((adapterView, view, pos, l) ->
         {
-            deleteSlot(slotKeys.get(pos));
+            if (pos < slotKeys.size())
+            {
+                deleteSlot(slotKeys.get(pos));
+                ;
+            }
             return true;
         });
+
     }
     private String removeperiods(String username) // May be redundant
     {
@@ -172,23 +196,42 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         return username.replace(".", "");
     }
     private void SlotLoader() {
-        TutorAvailabilityRef.addValueEventListener(new ValueEventListener() {
+        TutorAvailabilityRef.addValueEventListener(new ValueEventListener()
+        {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                TutorSlotDisplay.clear();
+                upcomingslots.clear();
+                pastslots.clear();
                 slotKeys.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String key = dataSnapshot.getKey();
                     String date = dataSnapshot.child("date").getValue(String.class);
                     String start = dataSnapshot.child("start").getValue(String.class);
                     String end = dataSnapshot.child("end").getValue(String.class);
-                    boolean Booked = dataSnapshot.child("Booked").getValue(boolean.class);
-                    String slot = "Tutor: " + TutorFirstname + " " + TutorLastname + " |  Course: "+ ChosenCourse + " | Date: " + date + " | Start time: " + start + " | End time: " + end + " | Status: " + (Booked ? "Booked" : "Available");
-                    TutorSlotDisplay.add(slot);
-                    slotKeys.add(key);
-                }
-                TutorSlotAdapter.notifyDataSetChanged();
+                    String course = dataSnapshot.child("course").getValue(String.class); // read stored course
+                    boolean Booked = Boolean.TRUE.equals(dataSnapshot.child("Booked").getValue(Boolean.class));
+                    if (course == null) course = "Unknown Course";
+                    if (date == null) date = "Unknown Date";
+                    if (start == null) start = "Unknown Start Time";
+                    if (end == null) end = " Unknown End Time";
+                    {
+                        String slot = "Tutor: " + TutorFirstname + " " + TutorLastname + " |  Course: " + course + " | Date: " + date + " | Start time: " + start + " | End time: " + end + " | Status: " + (Booked ? "Booked" : "Available");
+                        TutorSlotDisplay.add(slot);
 
+                        if (pastSessionCheck(date, end))
+                        {
+                            pastslots.add(slot);
+                        }
+                        else
+                        {
+                            upcomingslots.add(slot);
+
+                        }
+                        slotKeys.add(key);
+                    }
+                }
+                futureslotAdapter.notifyDataSetChanged();
+                pastslotAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -198,6 +241,32 @@ public class TutorAvailabilityActivity extends AppCompatActivity
             }
         });
     }
+
+    private boolean pastSessionCheck(String date, String endTime)
+    {
+        try
+        {
+           String dateParts[] = date.split("-");
+           int year = Integer.parseInt(dateParts[0]);
+           int month = Integer.parseInt(dateParts[1]);
+           int day = Integer.parseInt(dateParts[2]);
+
+           String timeParts[] = endTime.split(":");
+           int hour = Integer.parseInt(timeParts[0]);
+           int minute = Integer.parseInt(timeParts[1]);
+
+           java.util.Calendar calendar = java.util.Calendar.getInstance();
+           calendar.set(year, month - 1, day, hour, minute, 0);
+           calendar.set(java.util.Calendar.MILLISECOND, 0);
+           return calendar.getTimeInMillis() < System.currentTimeMillis();
+
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
     private void AddSlot()
     {
         String date = dateInputText.getText().toString();
@@ -221,6 +290,7 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         slotData.put("start", start);
         slotData.put("end", end);
         slotData.put("Booked", false);
+        slotData.put("course", ChosenCourse);
 
         TutorAvailabilityRef.child(SlotID).setValue(slotData).addOnSuccessListener(aVoid ->
         {
@@ -228,7 +298,7 @@ public class TutorAvailabilityActivity extends AppCompatActivity
             dateInputText.setText("");
             StartTimeText.setText("");
             EndTimeText.setText("");
-        }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Mehtod: AddSlot Error ", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Adding Slot Method: AddSlot Error ", Toast.LENGTH_SHORT).show());
 
     }
 
@@ -298,16 +368,19 @@ public class TutorAvailabilityActivity extends AppCompatActivity
         }).addOnFailureListener(e -> Toast.makeText(TutorAvailabilityActivity.this, "Issue Deleting Slot Mehtod: deleteSlot Error ", Toast.LENGTH_SHORT).show());
     }
 
+    @SuppressLint("SetTextI18n")
     public void setDate(int year, int month, int dayOfMonth) {
-        dateInputText.setText(year + "-" + month + "-" + dayOfMonth);
+        dateInputText.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
     }
 
+    @SuppressLint("DefaultLocale")
     public void setStartTime(int hourOfDay, int minute) {
-        StartTimeText.setText(hourOfDay + ":" + minute);
+        StartTimeText.setText(String.format("%02d:%02d", hourOfDay, minute));
     }
 
+    @SuppressLint("DefaultLocale")
     public void setEndTime(int hourOfDay, int minute) {
-        EndTimeText.setText(hourOfDay + ":" + minute);
+        EndTimeText.setText(String.format("%02d:%02d", hourOfDay, minute));
     }
 }
 
