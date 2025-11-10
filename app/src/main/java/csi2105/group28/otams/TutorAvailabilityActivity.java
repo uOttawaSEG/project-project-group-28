@@ -238,7 +238,7 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
                         futureSlots.add(slotText);
                     } else if (!booked && !autoApprove) {
                         pendingSlots.add(slotText);
-                    } else {
+                    } else if (isPastDate(date, end)){
                         pastSlots.add(slotText);
                     }
 
