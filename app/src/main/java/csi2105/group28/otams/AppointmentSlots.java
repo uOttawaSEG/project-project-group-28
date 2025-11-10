@@ -12,5 +12,5 @@ public class AppointmentSlots {
 
     public String getStudentUname() {
         return studentUname;
-    }
+    } //Not included in UML because it does not describe system domain model
 }

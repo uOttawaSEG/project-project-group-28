@@ -9,7 +9,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Database {
+public class Database { // Not included in UML
     private DatabaseReference otamsroot;
     private ArrayList<String> requestsS, rejectedS, requestsT, rejectedT;
     private ArrayList<User> requestsSU, rejectedSU, requestsTU, rejectedTU;
