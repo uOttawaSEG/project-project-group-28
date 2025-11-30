@@ -8,14 +8,39 @@
     android:padding="12dp"
     android:background="?android:attr/windowBackground">
 
+    <!-- ADDED: Welcome header for student -->
+    <TextView
+        android:id="@+id/studentWelcomeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome, Student!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimary"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp" />
+
+    <!-- ADDED: Instructions -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Search for tutoring sessions by course code"
+        android:textSize="14sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:paddingBottom="12dp" />
+
     <!-- text for filtering the sessions -->
     <EditText
         android:id="@+id/courseSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Search by course code"
-        android:inputType="text" />
+        android:hint="🔍 Search by course code (e.g., CSI2105)"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textSize="16sp" />
 
 
     <!-- view upcoming sessions -->

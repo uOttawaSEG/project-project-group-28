@@ -28,6 +28,17 @@ public class SignedIn extends AppCompatActivity {
         Intent intent = getIntent();
         thisuser = (User) getIntent().getSerializableExtra("info");
 
+        // ADDED: redirect approved students to StudentBookingActivity
+        if (thisuser != null && "approved".equalsIgnoreCase(thisuser.getStatus())
+                && "Student".equalsIgnoreCase(thisuser.getUserType())) {
+            // if student is approved - redirect to booking activity
+            Intent bookingIntent = new Intent(SignedIn.this, StudentBookingActivity.class);
+            bookingIntent.putExtra("info", thisuser);
+            startActivity(bookingIntent);
+            finish(); // close
+            return;
+        }
+
         // set up displays welcome or status-specific message
         TextView welcome = findViewById(R.id.Welcome);
         String status = thisuser.getStatus();  // get user status

@@ -26,6 +26,9 @@
         </activity>
         <activity android:name=".AdminRequestsActivity" />
         <activity android:name=".TutorAvailabilityActivity" />
+        <activity android:name=".SignedIn" />
+        <activity android:name=".SigningUp" />
+        <activity android:name=".StudentBookingActivity" />
         <!-- ADDED FOR RATING FEATURE -->
         <activity android:name=".StudentSessionsActivity" />
 
