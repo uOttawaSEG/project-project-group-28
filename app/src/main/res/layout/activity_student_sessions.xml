@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ADDED FOR RATING FEATURE -->
+<!-- Layout for students to view their booked sessions and rate completed ones -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/windowBackground">
+
+    <!-- Student Name Header -->
+    <TextView
+        android:id="@+id/studentNameHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Tutoring Sessions"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimary"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Upcoming Sessions Section -->
+    <TextView
+        android:id="@+id/upcomingLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upcoming Sessions"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?android:textColorPrimary" />
+
+    <ListView
+        android:id="@+id/upcomingSessionsList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:background="?attr/colorSurface" />
+
+    <!-- Past Sessions Section -->
+    <TextView
+        android:id="@+id/pastLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Past Sessions (Tap to Rate)"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:background="?attr/colorSurfaceVariant"
+        android:textColor="?android:textColorPrimary"
+        android:layout_marginTop="8dp" />
+
+    <ListView
+        android:id="@+id/pastSessionsList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:background="?attr/colorSurface" />
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:text="Back"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?android:attr/textColorPrimaryInverse" />
+
+</LinearLayout>

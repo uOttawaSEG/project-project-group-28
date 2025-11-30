@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ADDED FOR RATING FEATURE -->
+<!-- Dialog layout for students to rate tutors after completed sessions -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="?android:attr/windowBackground">
+
+    <!-- Dialog Title -->
+    <TextView
+        android:id="@+id/ratingDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate Your Tutor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimary"
+        android:gravity="center"
+        android:paddingBottom="8dp" />
+
+    <!-- Tutor Info -->
+    <TextView
+        android:id="@+id/tutorInfoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tutor: [Name]"
+        android:textSize="14sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:paddingBottom="4dp" />
+
+    <!-- Session Info -->
+    <TextView
+        android:id="@+id/sessionInfoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Course: [Course] | Date: [Date]"
+        android:textSize="12sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Rating Label -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="How would you rate this tutoring session?"
+        android:textSize="14sp"
+        android:textColor="?android:textColorPrimary"
+        android:paddingBottom="8dp" />
+
+    <!-- 5-Star Rating Bar -->
+    <RatingBar
+        android:id="@+id/tutorRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="0"
+        android:isIndicator="false"
+        android:paddingBottom="16dp" />
+
+    <!-- Current Rating Display -->
+    <TextView
+        android:id="@+id/currentRatingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No rating selected"
+        android:textSize="12sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Comment Label -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add a comment (optional, max 150 words):"
+        android:textSize="14sp"
+        android:textColor="?android:textColorPrimary"
+        android:paddingBottom="8dp" />
+
+    <!-- Comment Input -->
+    <EditText
+        android:id="@+id/ratingCommentInput"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="top|start"
+        android:inputType="textMultiLine|textCapSentences"
+        android:maxLength="1000"
+        android:hint="Share your experience with this tutor..."
+        android:textColorHint="?android:textColorHint"
+        android:textColor="?android:textColorPrimary"
+        android:background="?android:attr/editTextBackground"
+        android:padding="12dp"
+        android:scrollbars="vertical" />
+
+    <!-- Word Count Display -->
+    <TextView
+        android:id="@+id/wordCountText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0 / 150 words"
+        android:textSize="12sp"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="end"
+        android:paddingTop="4dp"
+        android:paddingBottom="16dp" />
+
+    <!-- Buttons Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingTop="8dp">
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/cancelRatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="?android:textColorSecondary"
+            android:backgroundTint="?attr/colorSurfaceVariant"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitRatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit Rating"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:enabled="false" />
+    </LinearLayout>
+
+</LinearLayout>

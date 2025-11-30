@@ -24,14 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SignedIn"
-            android:exported="false" />
-        <activity
-            android:name=".SigningUp"
-            android:exported="false" />
         <activity android:name=".AdminRequestsActivity" />
         <activity android:name=".TutorAvailabilityActivity" />
+        <!-- ADDED FOR RATING FEATURE -->
+        <activity android:name=".StudentSessionsActivity" />
 
 
     </application>
