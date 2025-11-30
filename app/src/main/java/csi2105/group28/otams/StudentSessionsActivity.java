@@ -21,7 +21,7 @@ import java.util.Calendar;
 import java.util.Map;
 
 /*
- * ADDED FOR RATING FEATURE
+ * 
  * Activity for students to view their booked tutoring sessions
  * Allows rating of completed sessions
  */
@@ -116,7 +116,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
     }
 
     /**
-     * ADDED FOR RATING FEATURE
+     * 
      * Removes periods from username for Firebase key compatibility
      */
     private String removePeriods(String username) {
@@ -178,8 +178,8 @@ public class StudentSessionsActivity extends AppCompatActivity {
                                             Boolean.TRUE.equals(rated)
                                         );
 
-                                        // Determine if session is past or upcoming
-                                        if (isSessionInPast(date, end)) {
+                                        // Determine if session is past or upcoming (based on start time)
+                                        if (isSessionInPast(date, start)) {
                                             pastSessionsInfo.add(sessionInfo);
                                             String ratingStatus = sessionInfo.rated ? " [RATED ★]" : " [Tap to rate]";
                                             pastSessions.add(formatSessionDisplay(sessionInfo) + ratingStatus);
@@ -250,17 +250,16 @@ public class StudentSessionsActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * Checks if a session is in the past based on date and end time
+     * Checks if a session is in the past based on date and start time
      */
-    private boolean isSessionInPast(String date, String endTime) {
+    private boolean isSessionInPast(String date, String startTime) {
         try {
             String[] dateParts = date.split("-");
             int year = Integer.parseInt(dateParts[0]);
             int month = Integer.parseInt(dateParts[1]) - 1; // Calendar months are 0-based
             int day = Integer.parseInt(dateParts[2]);
 
-            String[] timeParts = endTime.split(":");
+            String[] timeParts = startTime.split(":");
             int hour = Integer.parseInt(timeParts[0]);
             int minute = Integer.parseInt(timeParts[1]);
 

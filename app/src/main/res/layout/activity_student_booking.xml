@@ -8,7 +8,7 @@
     android:padding="12dp"
     android:background="?android:attr/windowBackground">
 
-    <!-- ADDED: Welcome header for student -->
+    <!-- Welcome header for student -->
     <TextView
         android:id="@+id/studentWelcomeHeader"
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="16dp" />
 
-    <!-- ADDED: Instructions -->
+    <!-- Instructions -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,6 +41,18 @@
         android:inputType="text"
         android:padding="12dp"
         android:textSize="16sp" />
+
+    <!-- Button to view My Sessions (past sessions with rating) -->
+    <Button
+        android:id="@+id/mySessionsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📝 My Sessions (View &amp; Rate Past Sessions)"
+        android:backgroundTint="?attr/colorSecondary"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="12dp" />
 
 
     <!-- view upcoming sessions -->

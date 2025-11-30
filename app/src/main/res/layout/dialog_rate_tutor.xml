@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ADDED FOR RATING FEATURE -->
+<!-- -->
 <!-- Dialog layout for students to rate tutors after completed sessions -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

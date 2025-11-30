@@ -18,9 +18,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 /*
- * ADDED FOR RATING FEATURE
+ * 
  * Dialog for students to rate tutors after completed sessions
- * Provides 5-star rating and optional comment (max 150 words)
+ * on a 5-star rating and optional comment (max 150 words)
  */
 public class RateTutorDialog extends Dialog {
 
@@ -43,7 +43,7 @@ public class RateTutorDialog extends Dialog {
 
     private OnRatingSubmittedListener listener;
 
-    // Interface for callback when rating is submitted
+    // Interface for callback when the students rating is submitted
     public interface OnRatingSubmittedListener {
         void onRatingSubmitted(TutorRating rating);
     }
@@ -81,7 +81,7 @@ public class RateTutorDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_rate_tutor);
 
-        // Initialize views
+        // this initializes views
         ratingBar = findViewById(R.id.tutorRatingBar);
         commentInput = findViewById(R.id.ratingCommentInput);
         currentRatingText = findViewById(R.id.currentRatingText);
@@ -91,11 +91,11 @@ public class RateTutorDialog extends Dialog {
         submitButton = findViewById(R.id.submitRatingButton);
         cancelButton = findViewById(R.id.cancelRatingButton);
 
-        // Set tutor and session info
+        // set tutor and session info
         tutorInfoText.setText("Tutor: " + tutorName);
         sessionInfoText.setText("Course: " + course + " | Date: " + sessionDate);
 
-        // Rating bar listener
+        // rating bar listener
         ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
             if (rating == 0) {
                 currentRatingText.setText("No rating selected");
@@ -106,7 +106,7 @@ public class RateTutorDialog extends Dialog {
             }
         });
 
-        // Comment input listener for word count
+        // comment input listener for word count
         commentInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -120,10 +120,10 @@ public class RateTutorDialog extends Dialog {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Submit button listener
+        // submit button listener
         submitButton.setOnClickListener(v -> submitRating());
 
-        // Cancel button listener
+        // cancel button listener
         cancelButton.setOnClickListener(v -> dismiss());
     }
 
@@ -139,9 +139,9 @@ public class RateTutorDialog extends Dialog {
             String[] words = trimmed.split("\\s+");
             wordCount = words.length;
 
-            // Enforce 150-word limit
+            // enforce 150-word limit
             if (wordCount > 150) {
-                // Truncate to 150 words
+                // truncate to 150 words
                 StringBuilder truncated = new StringBuilder();
                 for (int i = 0; i < 150; i++) {
                     truncated.append(words[i]);
@@ -155,7 +155,7 @@ public class RateTutorDialog extends Dialog {
 
         wordCountText.setText(wordCount + " / 150 words");
 
-        // Change color if approaching/at limit
+        // change color if approaching/at limit (little bonus)
         if (wordCount >= 150) {
             wordCountText.setTextColor(getContext().getResources().getColor(android.R.color.holo_red_dark));
         } else if (wordCount >= 130) {
@@ -166,7 +166,7 @@ public class RateTutorDialog extends Dialog {
     }
 
     /**
-     * ADDED FOR RATING FEATURE
+     * 
      * Submits the rating to Firebase database
      */
     private void submitRating() {
@@ -179,7 +179,7 @@ public class RateTutorDialog extends Dialog {
 
         String comment = commentInput.getText().toString().trim();
 
-        // Create rating object
+        // create rating object
         TutorRating tutorRating = new TutorRating(
             studentUsername,
             studentName,
@@ -192,7 +192,7 @@ public class RateTutorDialog extends Dialog {
             course
         );
 
-        // Save to Firebase
+        // save to Firebase
         DatabaseReference ratingsRef = FirebaseDatabase.getInstance()
             .getReference("otams/Ratings/Tutors")
             .child(tutorUsername);
@@ -203,10 +203,10 @@ public class RateTutorDialog extends Dialog {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Rating submitted successfully!", Toast.LENGTH_SHORT).show();
 
-                    // Mark session as rated in Firebase
+                    // mark session as rated in Firebase
                     markSessionAsRated();
 
-                    // Notify listener
+                    // notify listener
                     if (listener != null) {
                         listener.onRatingSubmitted(tutorRating);
                     }

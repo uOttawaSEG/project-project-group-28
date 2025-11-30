@@ -2,6 +2,7 @@ package csi2105.group28.otams;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,31 +14,35 @@ import com.google.firebase.database.*;
 import java.util.*;
 
 public class StudentBookingActivity extends AppCompatActivity {
-    // for the search FEATURE - UI components
+    // UI components
     private TextView studentWelcomeHeader;
     private EditText courseSearch;
+    private Button mySessionsButton;
     private ListView availableList, requestedList, bookedList;
     private ArrayAdapter<String> availableAdapter, requestedAdapter, bookedAdapter;
 
-    // for the search FEATURE  - Data lists
+    // Data lists
     private ArrayList<String> availableSessions = new ArrayList<>();
     private ArrayList<String> requestedSessions = new ArrayList<>();
     private ArrayList<String> bookedSessions = new ArrayList<>();
 
-    // for the search FEATURE - the full data lists (for filtering)
+    // Full data lists (for filtering)
     private ArrayList<SessionData> allAvailableSessions = new ArrayList<>();
     private ArrayList<SessionData> allRequestedSessions = new ArrayList<>();
     private ArrayList<SessionData> allBookedSessions = new ArrayList<>();
 
-    // for the search FEATURE - Firebase references
+    // Track past sessions that need rating
+    private ArrayList<SessionData> pastSessionsNeedingRating = new ArrayList<>();
+
+    // Firebase references
     private DatabaseReference availabilityRef;
 
-    // ADDED FOR SEARCH/FILTER FEATURE - Student info
+    // Student info
     private Student student;
     private String studentEmail;
     private String studentUsername;
 
-    // for the search FEATURE -  to store session data
+    // To store session data
     private static class SessionData {
         String tutorUsername;
         String tutorName;
@@ -72,7 +77,7 @@ public class StudentBookingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_booking);
 
-        // for the search FEATURE - get student info from intent
+        // Get student info from intent
         student = (Student) getIntent().getSerializableExtra("info");
         if (student != null) {
             studentEmail = student.getEmail();
@@ -83,20 +88,28 @@ public class StudentBookingActivity extends AppCompatActivity {
             return;
         }
 
-        // for the search FEATURE - initialize Firebase reference
+        // Initialize Firebase reference
         availabilityRef = FirebaseDatabase.getInstance().getReference("otams/Availability");
 
-        // for the search FEATURE - initialize the UI components
+        // Initialize UI components
         studentWelcomeHeader = findViewById(R.id.studentWelcomeHeader);
         courseSearch = findViewById(R.id.courseSearch);
+        mySessionsButton = findViewById(R.id.mySessionsButton);
         availableList = findViewById(R.id.availableList);
         requestedList = findViewById(R.id.requestedList);
         bookedList = findViewById(R.id.bookedList);
 
-        // set personalized welcome message
+        // Set personalized welcome message
         studentWelcomeHeader.setText("Welcome, " + student.getFirstName() + "!");
 
-        // for the search FEATURE - initialize adapters
+        // Button to navigate to My Sessions
+        mySessionsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StudentBookingActivity.this, StudentSessionsActivity.class);
+            intent.putExtra("info", student);
+            startActivity(intent);
+        });
+
+        // Initialize adapters
         availableAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, availableSessions);
         requestedAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, requestedSessions);
         bookedAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bookedSessions);
@@ -105,10 +118,13 @@ public class StudentBookingActivity extends AppCompatActivity {
         requestedList.setAdapter(requestedAdapter);
         bookedList.setAdapter(bookedAdapter);
 
-        // for the search FEATURE - lad all sessions
+        // Load all sessions
         loadAllSessions();
 
-        // for the search FEATURE - set up course search filter
+        // Clean up past sessions
+        cleanupPastSessions();
+
+        // Set up course search filter
         courseSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -122,7 +138,7 @@ public class StudentBookingActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // for the search FEATURE - handle  the clicking on available sessions to book
+        // handle  the clicking on available sessions to book
         availableList.setOnItemClickListener((parent, view, position, id) -> {
             if (position < allAvailableSessions.size()) {
                 SessionData session = allAvailableSessions.get(position);
@@ -130,7 +146,7 @@ public class StudentBookingActivity extends AppCompatActivity {
             }
         });
 
-        // for the search FEATURE - handle clicking on requested sessions to cancel
+        // handle clicking on requested sessions to cancel
         requestedList.setOnItemClickListener((parent, view, position, id) -> {
             if (position < allRequestedSessions.size()) {
                 SessionData session = allRequestedSessions.get(position);
@@ -138,7 +154,7 @@ public class StudentBookingActivity extends AppCompatActivity {
             }
         });
 
-        // for the search FEATURE - handle clicking on booked sessions to view details
+        // handle clicking on booked sessions to view details
         bookedList.setOnItemClickListener((parent, view, position, id) -> {
             if (position < allBookedSessions.size()) {
                 SessionData session = allBookedSessions.get(position);
@@ -148,7 +164,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE - removes periods from username for Firebase compatibility
+     *  removes periods from username for Firebase compatibility
      * @param username
      * @return
      */
@@ -158,7 +174,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Loads all sessions from all tutors and categorizes them
      */
     private void loadAllSessions() {
@@ -193,7 +209,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * ability to process a single session and categorizes it
      */
     private void processSession(String tutorUsername, DataSnapshot sessionSnapshot) {
@@ -226,7 +242,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Categorizes a session into Available, Requested, or Booked
      */
     private void categorizeSession(SessionData session) {
@@ -251,7 +267,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Retrieves tutor name from Firebase
      */
     private void getTutorName(String tutorUsername, TutorNameCallback callback) {
@@ -279,13 +295,13 @@ public class StudentBookingActivity extends AppCompatActivity {
         });
     }
 
-    // for the search FEATURE - Callback interface
+    // Callback interface
     private interface TutorNameCallback {
         void onTutorNameReceived(String name);
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Filters sessions by course code
      */
     private void filterSessionsByCourse(String searchText) {
@@ -324,7 +340,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Formats session data for display
      */
     private String formatSessionDisplay(SessionData session) {
@@ -334,7 +350,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Shows dialog to book an available session
      */
     private void showBookingDialog(SessionData session) {
@@ -351,7 +367,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Books a session for the student
      */
     private void bookSession(SessionData session) {
@@ -380,7 +396,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Shows dialog to cancel a requested session
      */
     private void showCancelRequestDialog(SessionData session) {
@@ -397,7 +413,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Cancels a booking request
      */
     private void cancelRequest(SessionData session) {
@@ -418,7 +434,7 @@ public class StudentBookingActivity extends AppCompatActivity {
     }
 
     /**
-     * for the search FEATURE -
+     * 
      * Shows details for a booked session
      */
     private void showSessionDetailsDialog(SessionData session) {
@@ -431,5 +447,209 @@ public class StudentBookingActivity extends AppCompatActivity {
                 "This session is confirmed!")
             .setPositiveButton("OK", null)
             .show();
+    }
+
+    /**
+     * 
+     * Cleans up past sessions - prompts for rating if session was attended
+     */
+    private void cleanupPastSessions() {
+        availabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                pastSessionsNeedingRating.clear();
+
+                // Iterate through all tutors
+                for (DataSnapshot tutorSnapshot : snapshot.getChildren()) {
+                    String tutorUsername = tutorSnapshot.getKey();
+
+                    // Iterate through all sessions
+                    for (DataSnapshot sessionSnapshot : tutorSnapshot.getChildren()) {
+                        String sessionKey = sessionSnapshot.getKey();
+                        String date = sessionSnapshot.child("date").getValue(String.class);
+                        String start = sessionSnapshot.child("start").getValue(String.class);
+                        String end = sessionSnapshot.child("end").getValue(String.class);
+                        Boolean booked = sessionSnapshot.child("Booked").getValue(Boolean.class);
+                        Boolean rated = sessionSnapshot.child("rated").getValue(Boolean.class);
+                        Map<String, Object> studentInfo = (Map<String, Object>)
+                            sessionSnapshot.child("studentInfo").getValue();
+
+                        // Check if session is in the past (based on start time)
+                        if (isSessionInPast(date, start)) {
+                            String sessionStudentEmail = "";
+                            if (studentInfo != null) {
+                                sessionStudentEmail = (String) studentInfo.get("email");
+                            }
+
+                            boolean isMySession = studentEmail != null &&
+                                studentEmail.equals(sessionStudentEmail);
+
+                            // If session was booked by this student and not yet rated
+                            if (Boolean.TRUE.equals(booked) && isMySession &&
+                                !Boolean.TRUE.equals(rated)) {
+                                // Need to rate this session before deleting
+                                collectPastSessionData(tutorUsername, sessionSnapshot);
+                            } else if (!Boolean.TRUE.equals(booked) ||
+                                (Boolean.TRUE.equals(booked) && isMySession &&
+                                 Boolean.TRUE.equals(rated))) {
+                                // Delete sessions that:
+                                // 1. Were never booked (expired available slots)
+                                // 2. Were booked by this student and already rated
+                                deleteSession(tutorUsername, sessionKey);
+                            }
+                        }
+                    }
+                }
+
+                // After collecting all past sessions, prompt for rating
+                if (!pastSessionsNeedingRating.isEmpty()) {
+                    promptRatingForPastSessions();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(StudentBookingActivity.this,
+                    "Failed to cleanup sessions: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 
+     * Collects data for a past session that needs rating
+     */
+    private void collectPastSessionData(String tutorUsername, DataSnapshot sessionSnapshot) {
+        String sessionKey = sessionSnapshot.getKey();
+        String date = sessionSnapshot.child("date").getValue(String.class);
+        String start = sessionSnapshot.child("start").getValue(String.class);
+        String end = sessionSnapshot.child("end").getValue(String.class);
+        String course = sessionSnapshot.child("course").getValue(String.class);
+        Map<String, Object> studentInfo = (Map<String, Object>)
+            sessionSnapshot.child("studentInfo").getValue();
+
+        getTutorName(tutorUsername, tutorName -> {
+            SessionData sessionData = new SessionData(
+                tutorUsername,
+                tutorName,
+                sessionKey,
+                date,
+                start,
+                end,
+                course,
+                true, // booked
+                false, // doesn't matter for past sessions
+                studentInfo
+            );
+            pastSessionsNeedingRating.add(sessionData);
+        });
+    }
+
+    /**
+     * Checks if a session is in the past based on date and start time
+     */
+    private boolean isSessionInPast(String date, String startTime) {
+        try {
+            String[] dateParts = date.split("-");
+            int year = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]) - 1; // Calendar months are 0-based
+            int day = Integer.parseInt(dateParts[2]);
+
+            String[] timeParts = startTime.split(":");
+            int hour = Integer.parseInt(timeParts[0]);
+            int minute = Integer.parseInt(timeParts[1]);
+
+            java.util.Calendar sessionCal = java.util.Calendar.getInstance();
+            sessionCal.set(year, month, day, hour, minute, 0);
+
+            return sessionCal.getTimeInMillis() < System.currentTimeMillis();
+        } catch (Exception e) {
+            return false; // If parsing fails, assume not past
+        }
+    }
+
+    /**
+     * 
+     * Prompts student to rate past completed sessions
+     */
+    private void promptRatingForPastSessions() {
+        if (pastSessionsNeedingRating.isEmpty()) {
+            return;
+        }
+
+        // Show alert about past sessions
+        SessionData firstSession = pastSessionsNeedingRating.get(0);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Rate Completed Session")
+            .setMessage("You have " + pastSessionsNeedingRating.size() +
+                " completed session(s) that need rating.\n\n" +
+                "Would you like to rate your session with " + firstSession.tutorName + "?\n\n" +
+                "Course: " + firstSession.course + "\n" +
+                "Date: " + firstSession.date)
+            .setPositiveButton("Rate Now", (dialog, which) -> {
+                showRatingDialogForPastSession(firstSession);
+            })
+            .setNegativeButton("Skip", (dialog, which) -> {
+                // Remove from list and delete without rating
+                pastSessionsNeedingRating.remove(0);
+                deleteSession(firstSession.tutorUsername, firstSession.sessionKey);
+                // Continue with next session
+                promptRatingForPastSessions();
+            })
+            .setCancelable(false)
+            .show();
+    }
+
+    /**
+     * 
+     * Shows rating dialog for a past session
+     */
+    private void showRatingDialogForPastSession(SessionData session) {
+        RateTutorDialog dialog = new RateTutorDialog(
+            this,
+            studentUsername,
+            student.getFirstName() + " " + student.getLastName(),
+            session.tutorUsername,
+            session.tutorName,
+            session.sessionKey,
+            session.date,
+            session.course
+        );
+
+        dialog.setOnRatingSubmittedListener(rating -> {
+            // After rating, delete the session
+            deleteSession(session.tutorUsername, session.sessionKey);
+
+            // Remove from list
+            pastSessionsNeedingRating.remove(session);
+
+            Toast.makeText(this, "Thank you for rating! Session deleted.", Toast.LENGTH_SHORT).show();
+
+            // Continue with next session
+            promptRatingForPastSessions();
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * 
+     * Deletes a session from Firebase
+     */
+    private void deleteSession(String tutorUsername, String sessionKey) {
+        DatabaseReference sessionRef = FirebaseDatabase.getInstance()
+            .getReference("otams/Availability")
+            .child(tutorUsername)
+            .child(sessionKey);
+
+        sessionRef.removeValue()
+            .addOnSuccessListener(aVoid -> {
+                // Session deleted successfully
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to delete session: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            });
     }
 }

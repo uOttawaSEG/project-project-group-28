@@ -2,6 +2,7 @@ package csi2105.group28.otams;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
@@ -12,7 +13,7 @@ import java.util.*;
 
 public class TutorAvailabilityActivity extends AppCompatActivity {
 
-    private Button dateInput, startTimeInput, endTimeInput, addButton;
+    private Button dateInput, startTimeInput, endTimeInput, addButton, viewWeeklyScheduleButton;
     private TextView dateInputText, startTimeText, endTimeText, highestDegree;
     private Spinner courseSpinner;
     private Switch autoApproveSwitch;
@@ -59,6 +60,7 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
         courseSpinner = findViewById(R.id.courseSpinner);
         autoApproveSwitch = findViewById(R.id.autoApproveSwitch);
         highestDegree = findViewById(R.id.highestDegree);
+        viewWeeklyScheduleButton = findViewById(R.id.viewWeeklyScheduleButton);
 
         futureList = findViewById(R.id.futureList);
         pendingList = findViewById(R.id.pendingList);
@@ -77,6 +79,14 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
         pastList.setAdapter(pastAdapter);
 
         loadTutorInfo();
+
+        // Navigate to weekly schedule
+        viewWeeklyScheduleButton.setOnClickListener(v -> {
+            Intent intent = new Intent(TutorAvailabilityActivity.this, TutorWeeklyScheduleActivity.class);
+            Tutor tutorObj = (Tutor) getIntent().getSerializableExtra("info");
+            intent.putExtra("info", tutorObj);
+            startActivity(intent);
+        });
 
         // date picker
         dateInput.setOnClickListener(v -> {

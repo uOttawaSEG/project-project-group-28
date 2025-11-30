@@ -42,6 +42,17 @@
         android:layout_marginBottom="12dp"
         android:spinnerMode="dropdown" />
 
+    <!-- Button to view weekly schedule -->
+    <Button
+        android:id="@+id/viewWeeklyScheduleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📅 View Weekly Schedule"
+        android:backgroundTint="?attr/colorSecondary"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp" />
+
     <!-- date and time pickers -->
     <ScrollView
         android:layout_width="match_parent"
