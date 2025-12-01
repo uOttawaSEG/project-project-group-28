@@ -23,7 +23,9 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
     private ArrayList<String> futureSlots = new ArrayList<>();
     private ArrayList<String> pendingSlots = new ArrayList<>();
     private ArrayList<String> pastSlots = new ArrayList<>();
-    private ArrayList<String> slotKeys = new ArrayList<>();
+    private ArrayList<String> futureKeys = new ArrayList<>();
+    private ArrayList<String> pendingKeys = new ArrayList<>();
+    private ArrayList<String> pastKeys = new ArrayList<>();
     private DatabaseReference availabilityRef, tutorInfoRef, sessionRequestsRef;
 
     private String tutorUsername, tutorFirstName, tutorLastName, chosenCourse;
@@ -115,20 +117,20 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
 
         // be able to click on the upcoming sessions
         futureList.setOnItemClickListener((parent, view, position, id) -> {
-            String key = slotKeys.get(position);
+            String key = futureKeys.get(position);
             showUpcomingSessionDialog(key);
         });
 
         // click to delete available slot
-        futureList.setOnItemLongClickListener((parent, view, position, id) -> {
-            String key = slotKeys.get(position);
+        pastList.setOnItemLongClickListener((parent, view, position, id) -> {
+            String key = pastKeys.get(position);
             deleteSlot(key);
             return true;
         });
 
         // ability to tap on pending requests
         pendingList.setOnItemClickListener((parent, view, position, id) -> {
-            String key = slotKeys.get(position);
+            String key = pendingKeys.get(position);
             showPendingSessionDialog(key);
         });
     }
@@ -225,7 +227,8 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
         availabilityRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                futureSlots.clear(); pendingSlots.clear(); pastSlots.clear(); slotKeys.clear();
+                futureSlots.clear(); pendingSlots.clear(); pastSlots.clear();
+                futureKeys.clear(); pendingKeys.clear(); pastKeys.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     String key = snap.getKey();
                     String date = snap.child("date").getValue(String.class);
@@ -235,24 +238,31 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
                     boolean autoApprove = Boolean.TRUE.equals(snap.child("autoApprove").getValue(Boolean.class));
                     Map<String, Object> studentInfo = (Map<String, Object>) snap.child("studentInfo").getValue();
 
-//                    String studentName = studentInfo != null ? (String) studentInfo.get("name") : "";
-//                    String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "";
-//                    String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "";
-//                    String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "";
+                    String studentName = studentInfo != null ? (String) studentInfo.get("name") : "";
+                    String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "";
+                    String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "";
+                    String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "";
 
                     String slotText = "Course: " + (snap.child("course").getValue(String.class) != null ? snap.child("course").getValue(String.class) : "N/A")
                             + " | Date: " + date + " | Start: " + start + " | End: " + end
                             + " | Status: " + (booked ? "Booked" : "Available");
 
-                    if (booked) {
-                        futureSlots.add(slotText);
-                    } else if (!booked && !autoApprove) {
-                        pendingSlots.add(slotText);
-                    } else if (isPastDate(date, end)){
-                        pastSlots.add(slotText);
-                    }
+                    // Check if studentInfo has actual data (not just empty strings)
+                    boolean hasStudentInfo = studentEmail != null && !studentEmail.isEmpty();
 
-                    slotKeys.add(key);
+                    if (booked) {
+                        // Booked sessions go to future/upcoming
+                        futureSlots.add(slotText);
+                        futureKeys.add(key);
+                    } else if (hasStudentInfo) {
+                        // Not booked but has student info = pending approval
+                        pendingSlots.add(slotText);
+                        pendingKeys.add(key);
+                    } else {
+                        // Available slots or past sessions
+                        pastSlots.add(slotText);
+                        pastKeys.add(key);
+                    }
                 }
                 futureAdapter.notifyDataSetChanged();
                 pendingAdapter.notifyDataSetChanged();
