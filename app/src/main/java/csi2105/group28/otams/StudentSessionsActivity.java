@@ -51,6 +51,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
         String end;
         String course;
         boolean rated;
+        boolean booked;
 
         SessionInfo(String tutorUsername, String tutorName, String sessionKey,
                    String date, String start, String end, String course, boolean rated) {
