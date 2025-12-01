@@ -71,6 +71,7 @@
         android:layout_marginTop="16dp"
         android:text="Back"
         android:backgroundTint="?attr/colorPrimary"
-        android:textColor="?android:attr/textColorPrimaryInverse" />
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:layout_marginBottom="24dp" />
 
 </LinearLayout>
