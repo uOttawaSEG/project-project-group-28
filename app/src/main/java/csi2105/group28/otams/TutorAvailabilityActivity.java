@@ -235,10 +235,10 @@ public class TutorAvailabilityActivity extends AppCompatActivity {
                     boolean autoApprove = Boolean.TRUE.equals(snap.child("autoApprove").getValue(Boolean.class));
                     Map<String, Object> studentInfo = (Map<String, Object>) snap.child("studentInfo").getValue();
 
-                    String studentName = studentInfo != null ? (String) studentInfo.get("name") : "";
-                    String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "";
-                    String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "";
-                    String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "";
+//                    String studentName = studentInfo != null ? (String) studentInfo.get("name") : "";
+//                    String studentEmail = studentInfo != null ? (String) studentInfo.get("email") : "";
+//                    String studentPhone = studentInfo != null ? (String) studentInfo.get("phone") : "";
+//                    String studentStudies = studentInfo != null ? (String) studentInfo.get("studies") : "";
 
                     String slotText = "Course: " + (snap.child("course").getValue(String.class) != null ? snap.child("course").getValue(String.class) : "N/A")
                             + " | Date: " + date + " | Start: " + start + " | End: " + end
