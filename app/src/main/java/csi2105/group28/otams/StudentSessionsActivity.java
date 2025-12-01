@@ -240,8 +240,8 @@ public class StudentSessionsActivity extends AppCompatActivity {
                                             start,
                                             end,
                                             course,
-                                            Boolean.TRUE.equals(booked),
-                                            Boolean.TRUE.equals(rated)
+                                            Boolean.TRUE.equals(rated),
+                                            Boolean.TRUE.equals(booked)
                                         );
 
 
