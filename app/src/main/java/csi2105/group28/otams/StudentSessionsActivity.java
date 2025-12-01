@@ -109,6 +109,52 @@ public class StudentSessionsActivity extends AppCompatActivity {
         pastAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, pastSessions);
 
         upcomingSessionsList.setAdapter(upcomingAdapter);
+        upcomingSessionsList.setOnItemClickListener((parent, view, position, id) -> {
+
+            SessionInfo info = upcomingSessionsInfo.get(position);
+
+            // 1. Only approved (booked == true)
+            if (!info.booked) {
+                Toast.makeText(this, "Only approved sessions can be canceled.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 2. Must be > 24 hours before start time
+            if (!canCancel24h(info.date, info.start)) {
+                Toast.makeText(this, "Cannot cancel less than 24 hours before the session.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            // 3. Confirm cancel
+            new AlertDialog.Builder(this)
+                    .setTitle("Cancel Session")
+                    .setMessage("Do you really want to cancel this session?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+
+                        // Update Firebase: set Booked = false
+                        FirebaseDatabase.getInstance()
+                                .getReference("otams")
+                                .child("Availability")
+                                .child(info.tutorUsername)
+                                .child(info.sessionKey)
+                                .child("Booked")
+                                .setValue(false);
+
+                        // Remove studentInfo field
+                        FirebaseDatabase.getInstance()
+                                .getReference("otams")
+                                .child("Availability")
+                                .child(info.tutorUsername)
+                                .child(info.sessionKey)
+                                .child("studentInfo")
+                                .removeValue();
+
+                        Toast.makeText(this, "Session canceled successfully.", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        });
+
         pastSessionsList.setAdapter(pastAdapter);
 
         // Load sessions
