@@ -34,12 +34,6 @@ public class UserTests {
         assertEquals("passwordc",exception.getMessage());
 
     }
-
-//    public void checkCorrectStudentFormat(){// Check the student class by creating a valiod instance
-//        assertThrows(IllegalArgumentException.class,()->{
-//            Student Uche = new Student("Uche","mike","uchemikejohn@gmail.com","wert12345rt","1234571919","Electrical Engineering");
-//        });
-//    }
     @Test
     public void checkTutorAddingCourse(){// Checks the course addition function by adding a new course to the coursesOffered of a Tutor instance
         ArrayList<String> coursesOffered = new ArrayList<String>();
