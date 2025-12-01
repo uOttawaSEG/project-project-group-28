@@ -64,6 +64,20 @@ public class StudentSessionsActivity extends AppCompatActivity {
             this.rated = rated;
         }
     }
+    private boolean canCancel24h(String date, String startTime) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date sessionDate = sdf.parse(date + " " + startTime);
+            Date now = new Date();
+
+            long diff = sessionDate.getTime() - now.getTime();
+            long hours = diff / (1000 * 60 * 60);
+
+            return hours >= 24;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
