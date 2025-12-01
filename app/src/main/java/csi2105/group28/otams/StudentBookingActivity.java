@@ -54,10 +54,11 @@ public class StudentBookingActivity extends AppCompatActivity {
         boolean booked;
         boolean autoApprove;
         Map<String, Object> studentInfo;
+        Double tutorRating;
 
         SessionData(String tutorUsername, String tutorName, String sessionKey,
                    String date, String start, String end, String course,
-                   boolean booked, boolean autoApprove, Map<String, Object> studentInfo) {
+                   boolean booked, boolean autoApprove, Map<String, Object> studentInfo, Double tutorRating) {
             this.tutorUsername = tutorUsername;
             this.tutorName = tutorName;
             this.sessionKey = sessionKey;
@@ -68,6 +69,7 @@ public class StudentBookingActivity extends AppCompatActivity {
             this.booked = booked;
             this.autoApprove = autoApprove;
             this.studentInfo = studentInfo;
+            this.tutorRating=tutorRating;
         }
     }
 
@@ -221,7 +223,10 @@ public class StudentBookingActivity extends AppCompatActivity {
         Boolean booked = sessionSnapshot.child("Booked").getValue(Boolean.class);
         Boolean autoApprove = sessionSnapshot.child("autoApprove").getValue(Boolean.class);
         Map<String, Object> studentInfo = (Map<String, Object>) sessionSnapshot.child("studentInfo").getValue();
-
+        Double[] rating = new Double[1];
+        getTutorRating(tutorUsername, rate->{
+            rating[0]=rate;
+        });
         // get tutor name and categorize session
         getTutorName(tutorUsername, tutorName -> {
             SessionData sessionData = new SessionData(
@@ -234,7 +239,8 @@ public class StudentBookingActivity extends AppCompatActivity {
                 course,
                 Boolean.TRUE.equals(booked),
                 Boolean.TRUE.equals(autoApprove),
-                studentInfo
+                studentInfo,
+                rating[0]
             );
 
             categorizeSession(sessionData);
@@ -299,6 +305,33 @@ public class StudentBookingActivity extends AppCompatActivity {
     private interface TutorNameCallback {
         void onTutorNameReceived(String name);
     }
+    /// retrieves tutorRating from firebase
+    private void getTutorRating(String tutorUsername, TutorRatingCallback callback) {
+        DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                .getReference("otams/Users/Tutor")
+                .child(tutorUsername.substring(0, 1))
+                .child(tutorUsername.substring(1, 2))
+                .child(tutorUsername)
+                .child("info");
+
+        tutorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Double rating  = snapshot.child("rating").getValue(Double.class);
+                callback.onTutorRatingReceived(rating);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onTutorRatingReceived(0.0);
+            }
+        });
+    }
+
+    // Callback  interface for tutorRating
+    private interface TutorRatingCallback {
+        void onTutorRatingReceived(Double rating);
+    }
 
     /**
      * 
@@ -345,6 +378,7 @@ public class StudentBookingActivity extends AppCompatActivity {
      */
     private String formatSessionDisplay(SessionData session) {
         return "Tutor: " + session.tutorName + "\n" +
+                "Average Rating: "+(session.tutorRating==null?"Unrated":session.tutorRating)+"\n"+
                "Course: " + session.course + "\n" +
                "Date: " + session.date + " | " + session.start + " - " + session.end;
     }
@@ -431,6 +465,18 @@ public class StudentBookingActivity extends AppCompatActivity {
             .setPositiveButton("Cancel Request", (dialog, which) -> cancelRequest(session))
             .setNegativeButton("Keep Request", null)
             .show();
+    }
+
+    private void showSesionInfoDialog(SessionData session) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Session")
+                .setMessage("This Session in within 24 hours\n\n" +
+                        "Tutor: " + session.tutorName + "\n" +
+                        "Course: " + session.course + "\n" +
+                        "Date: " + session.date + "\n" +
+                        "Time: " + session.start + " - " + session.end)
+                .setNegativeButton("OK", null)
+                .show();
     }
 
     /**
@@ -548,6 +594,10 @@ public class StudentBookingActivity extends AppCompatActivity {
         String course = sessionSnapshot.child("course").getValue(String.class);
         Map<String, Object> studentInfo = (Map<String, Object>)
             sessionSnapshot.child("studentInfo").getValue();
+        Double[] rating = new Double[1];
+        getTutorRating(tutorUsername, rate->{
+            rating[0]=rate;
+        });
 
         getTutorName(tutorUsername, tutorName -> {
             SessionData sessionData = new SessionData(
@@ -560,7 +610,8 @@ public class StudentBookingActivity extends AppCompatActivity {
                 course,
                 true, // booked
                 false, // doesn't matter for past sessions
-                studentInfo
+                studentInfo,
+                    rating[0]
             );
             pastSessionsNeedingRating.add(sessionData);
         });
@@ -682,4 +733,23 @@ public class StudentBookingActivity extends AppCompatActivity {
         return start1 < end2 && end1 > start2;
     }
 
+
+    private boolean isSessionCancellable(String date, String startTime) {
+        try {
+            String[] dateParts = date.split("-");
+            int year = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]) - 1; // Calendar months are 0-based
+            int day = Integer.parseInt(dateParts[2]);
+
+            String[] timeParts = startTime.split(":");
+            int hour = Integer.parseInt(timeParts[0]);
+            int minute = Integer.parseInt(timeParts[1]);
+
+            Calendar sessionCal = Calendar.getInstance();
+            sessionCal.set(year, month, day, hour, minute, 0);
+            return  System.currentTimeMillis()+86400000< sessionCal.getTimeInMillis();
+        } catch (Exception e) {
+            return false; // If parsing fails, assume not past
+        }
+    }
 }

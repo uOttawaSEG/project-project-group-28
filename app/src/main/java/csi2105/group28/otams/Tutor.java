@@ -10,6 +10,9 @@ public class Tutor extends User {
     private List<TutorAvailabilityActivity> totalappointmentslots; // not implemented yet
     private List<BookedAppointments> sessions; // not implemented yet
 
+    private Integer numberOfRatings;
+    private Double rating;
+
     // Empty constructor
     public Tutor() {
         super();
@@ -17,6 +20,8 @@ public class Tutor extends User {
         this.coursesOffered = new ArrayList<>();
         this.totalappointmentslots = new ArrayList<>();
         this.sessions = new ArrayList<>();
+        numberOfRatings=0;
+        rating=0.0;
     }
 
     /**
@@ -57,5 +62,25 @@ public class Tutor extends User {
 
     public boolean isCourseOffered(String course) {
         return this.coursesOffered.contains(course);
+    }
+
+    public void setRating(double rating){
+        this.rating=rating;
+    }
+    public void setNumberOfRatings(int numberOfRatings){
+        this.numberOfRatings=numberOfRatings;
+    }
+
+    public double getRating(){
+        return rating;
+    }
+
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void addRating(int rating){
+        this.rating=((this.rating*numberOfRatings)+rating)/(numberOfRatings+1);
+        numberOfRatings++;
     }
 }

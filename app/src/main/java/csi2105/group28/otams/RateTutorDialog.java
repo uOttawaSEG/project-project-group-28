@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /*
  * 
@@ -211,6 +214,7 @@ public class RateTutorDialog extends Dialog {
                         listener.onRatingSubmitted(tutorRating);
                     }
 
+
                     dismiss();
                 })
                 .addOnFailureListener(e -> {
@@ -218,6 +222,78 @@ public class RateTutorDialog extends Dialog {
                         Toast.LENGTH_SHORT).show();
                 });
         }
+        Double[] arating = new Double[1];
+        Integer[] numRating = new Integer[1];
+        getTutorRating(tutorUsername, rate->{
+            arating[0]=rate;
+            getNumTutorRating(tutorUsername, numRate->{
+                numRating[0]=numRate;
+                arating[0]=((arating[0]*numRating[0])+rating)/(numRating[0]+1);
+                numRating[0]++;
+                DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                        .getReference("otams/Users/Tutor").child(tutorUsername.substring(0, 1))
+                        .child(tutorUsername.substring(1, 2)).child(tutorUsername)
+                        .child("info");
+                tutorRef.child("rating").setValue(arating[0]);
+                tutorRef.child("numberOfRatings").setValue(numRating[0]);
+            });
+        });
+
+
+
+    }
+    private void getTutorRating(String tutorUsername, TutorRatingCallback callback) {
+        DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                .getReference("otams/Users/Tutor")
+                .child(tutorUsername.substring(0, 1))
+                .child(tutorUsername.substring(1, 2))
+                .child(tutorUsername)
+                .child("info");
+
+        tutorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Double rating  = snapshot.child("rating").getValue(Double.class);
+                callback.onTutorRatingReceived(rating);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onTutorRatingReceived(0.0);
+            }
+        });
+    }
+
+    private void getNumTutorRating(String tutorUsername, NumTutorRatingCallback callback) {
+        DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                .getReference("otams/Users/Tutor")
+                .child(tutorUsername.substring(0, 1))
+                .child(tutorUsername.substring(1, 2))
+                .child(tutorUsername)
+                .child("info");
+
+        tutorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Integer numOfRating  = snapshot.child("numberOfRatings").getValue(Integer.class);
+                callback.onNumRatingReceived(numOfRating);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onNumRatingReceived(0);
+            }
+        });
+    }
+
+    // Callback  interface for tutorRating
+    private interface NumTutorRatingCallback {
+        void onNumRatingReceived(Integer numOfRating);
+    }
+
+    // Callback  interface for tutorRating
+    private interface TutorRatingCallback {
+        void onTutorRatingReceived(Double rating);
     }
 
     /**

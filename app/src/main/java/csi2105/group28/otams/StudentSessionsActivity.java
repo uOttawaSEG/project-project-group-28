@@ -56,10 +56,14 @@ public class StudentSessionsActivity extends AppCompatActivity {
         boolean rated;
         boolean booked;
 
+        Double tutorRating;
+
         SessionInfo(String tutorUsername, String tutorName, String sessionKey,
-                   String date, String start, String end, String course, boolean rated, boolean booked) {
+                   String date, String start, String end, String course, boolean rated,
+                    boolean booked, Double rating) {
             this.tutorUsername = tutorUsername;
             this.tutorName = tutorName;
+            this.tutorRating = rating;
             this.sessionKey = sessionKey;
             this.date = date;
             this.start = start;
@@ -229,7 +233,11 @@ public class StudentSessionsActivity extends AppCompatActivity {
                                     String end = sessionSnapshot.child("end").getValue(String.class);
                                     String course = sessionSnapshot.child("course").getValue(String.class);
                                     Boolean rated = sessionSnapshot.child("rated").getValue(Boolean.class);
-
+                                    Double[] rating= new Double[1];
+                                    Integer numRating=0;
+                                    getTutorRating(tutorUsername, rate->{
+                                        rating[0]=rate;
+                                    });
                                     // Get tutor name
                                     getTutorName(tutorUsername, tutorName -> {
                                         SessionInfo sessionInfo = new SessionInfo(
@@ -240,8 +248,10 @@ public class StudentSessionsActivity extends AppCompatActivity {
                                             start,
                                             end,
                                             course,
-                                            Boolean.TRUE.equals(rated),
-                                            Boolean.TRUE.equals(booked)
+                                                Boolean.TRUE.equals(rated),
+                                            Boolean.TRUE.equals(booked),
+
+                                                rating[0]
                                         );
 
 
@@ -301,9 +311,37 @@ public class StudentSessionsActivity extends AppCompatActivity {
         });
     }
 
+
     // Callback interface for async tutor name retrieval
     private interface TutorNameCallback {
         void onTutorNameReceived(String name);
+    }
+    /// retrieves tutorRating from firebase
+    private void getTutorRating(String tutorUsername, TutorRatingCallback callback) {
+        DatabaseReference tutorRef = FirebaseDatabase.getInstance()
+                .getReference("otams/Users/Tutor")
+                .child(tutorUsername.substring(0, 1))
+                .child(tutorUsername.substring(1, 2))
+                .child(tutorUsername)
+                .child("info");
+
+        tutorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Double rating  = snapshot.child("rating").getValue(Double.class);
+                callback.onTutorRatingReceived(rating);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onTutorRatingReceived(0.0);
+            }
+        });
+    }
+
+    // Callback  interface for tutorRating
+    private interface TutorRatingCallback {
+        void onTutorRatingReceived(Double rating);
     }
 
     /**
@@ -312,6 +350,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
      */
     private String formatSessionDisplay(SessionInfo session) {
         return "Tutor: " + session.tutorName + "\n" +
+                "Average Rating: "+(session.tutorRating==null?"Unrated":Math.round(session.tutorRating*10.0)/10.0)+"\n"+
                "Course: " + session.course + "\n" +
                "Date: " + session.date + " | " + session.start + " - " + session.end;
     }
