@@ -228,6 +228,12 @@ public class RateTutorDialog extends Dialog {
             arating[0]=rate;
             getNumTutorRating(tutorUsername, numRate->{
                 numRating[0]=numRate;
+                if (arating[0]==null) {
+                    arating[0]=0.0;
+                }
+                if(numRating[0]==null){
+                    numRating[0]=0;
+                }
                 arating[0]=((arating[0]*numRating[0])+rating)/(numRating[0]+1);
                 numRating[0]++;
                 DatabaseReference tutorRef = FirebaseDatabase.getInstance()

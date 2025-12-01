@@ -378,7 +378,7 @@ public class StudentBookingActivity extends AppCompatActivity {
      */
     private String formatSessionDisplay(SessionData session) {
         return "Tutor: " + session.tutorName + "\n" +
-                "Average Rating: "+(session.tutorRating==null?"Unrated":session.tutorRating)+"\n"+
+                "Average Rating: "+(session.tutorRating==null?"Unrated":Math.round(session.tutorRating*10.0)/10.0)+"\n"+
                "Course: " + session.course + "\n" +
                "Date: " + session.date + " | " + session.start + " - " + session.end;
     }

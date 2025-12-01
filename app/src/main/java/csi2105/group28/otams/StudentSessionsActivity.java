@@ -396,7 +396,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
 
         dialog.setOnRatingSubmittedListener(rating -> {
             // Refresh sessions list to show updated rating status
-            loadStudentSessions();
+            //loadStudentSessions();
             Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_SHORT).show();
         });
 
