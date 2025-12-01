@@ -34,6 +34,8 @@ public class Tutor extends User {
         this.totalappointmentslots = new ArrayList<>();
         this.sessions = new ArrayList<>();
         setStatus("pending"); // default new tutor status
+        numberOfRatings=0;
+        rating=0.0;
     }
 
     public String getHighestDegree() {
