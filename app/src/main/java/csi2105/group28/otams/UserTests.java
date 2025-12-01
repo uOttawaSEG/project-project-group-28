@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+//Test Cases of all domain model classes using local tests
 public class UserTests {
     public void checkEmail(){
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, ()->{
