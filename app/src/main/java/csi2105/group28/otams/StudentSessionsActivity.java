@@ -62,6 +62,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
             this.end = end;
             this.course = course;
             this.rated = rated;
+            this.booked = booked;
         }
     }
     private boolean canCancel24h(String date, String startTime) {
