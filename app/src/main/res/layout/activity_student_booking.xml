@@ -107,14 +107,17 @@
         android:text="Booked Sessions"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/bookedList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="?attr/colorSurface"
         android:dividerHeight="2dp"
-        android:background="?attr/colorSurface" />
+        android:visibility="invisible"
+        tools:visibility="gone" />
 
 </LinearLayout>

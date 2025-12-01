@@ -376,22 +376,43 @@ public class StudentBookingActivity extends AppCompatActivity {
             .child(session.tutorUsername)
             .child(session.sessionKey);
 
-        // Create student info map
-        Map<String, Object> studentInfo = new HashMap<>();
-        studentInfo.put("name", student.getFirstName() + " " + student.getLastName());
-        studentInfo.put("email", studentEmail);
-        studentInfo.put("phone", student.getPhoneNum());
-        studentInfo.put("studies", student.getProgramOfStudy());
 
-        // Update session with student info
-        sessionRef.child("studentInfo").setValue(studentInfo);
 
-        // If autoApprove is true, mark as booked immediately (on tutor side)
-        if (session.autoApprove) {
-            sessionRef.child("Booked").setValue(true);
-            Toast.makeText(this, "Session booked successfully!", Toast.LENGTH_SHORT).show();
+        // check if the session conflicts with any other sessions booked by the student
+        boolean conflict = false;
+        for (SessionData otherSession : allBookedSessions) {
+            if( timeOverlap(session.start, session.end, otherSession.start, otherSession.end ) && Objects.equals(session.date, otherSession.date)) {
+                // there is an overlap
+                conflict = true;
+            }
+        }
+        for (SessionData otherSession : allRequestedSessions) {
+            if( timeOverlap(session.start, session.end, otherSession.start, otherSession.end ) && Objects.equals(session.date, otherSession.date)) {
+                // there is an overlap
+                conflict = true;
+            }
+        }
+        if (!conflict) {
+
+            // Create student info map
+            Map<String, Object> studentInfo = new HashMap<>();
+            studentInfo.put("name", student.getFirstName() + " " + student.getLastName());
+            studentInfo.put("email", studentEmail);
+            studentInfo.put("phone", student.getPhoneNum());
+            studentInfo.put("studies", student.getProgramOfStudy());
+
+            // Update session with student info
+            sessionRef.child("studentInfo").setValue(studentInfo);
+
+            // If autoApprove is true, mark as booked immediately (on tutor side)
+            if (session.autoApprove) {
+                sessionRef.child("Booked").setValue(true);
+                Toast.makeText(this, "Session booked successfully!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Booking request sent! Waiting for tutor approval.", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "Booking request sent! Waiting for tutor approval.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You already have a session/request during this time", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -652,4 +673,13 @@ public class StudentBookingActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             });
     }
+
+    private boolean timeOverlap(String s1, String e1, String s2, String e2) {
+        int start1 = Integer.parseInt(s1.replace(":", ""));
+        int end1 = Integer.parseInt(e1.replace(":", ""));
+        int start2 = Integer.parseInt(s2.replace(":", ""));
+        int end2 = Integer.parseInt(e2.replace(":", ""));
+        return start1 < end2 && end1 > start2;
+    }
+
 }
