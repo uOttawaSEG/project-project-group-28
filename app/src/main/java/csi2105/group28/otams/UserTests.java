@@ -47,4 +47,12 @@ public class UserTests {
         coursesOffered.add("ADM1506");
         assertArrayEquals(coursesOffered.toArray(),Johnson.getCoursesOffered().toArray());
     }
+
+    public void checkRating(){
+        TutorRating TestRating = new TutorRating("Mike","Rate45rt","Testtutor","TestTutorName", 7, "Good course", "Session", "12Nov","creative_course");
+        TestRating.setRating(8);
+        assertEquals(0,TestRating.getRating());
+        TestRating.setRating(3);
+        assertEquals(3,TestRating.getRating());
+    }
 }
