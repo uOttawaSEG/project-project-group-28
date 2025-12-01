@@ -240,6 +240,7 @@ public class StudentSessionsActivity extends AppCompatActivity {
                                             Boolean.TRUE.equals(rated)
                                         );
 
+
                                         // Determine if session is past or upcoming (based on start time)
                                         if (isSessionInPast(date, start)) {
                                             pastSessionsInfo.add(sessionInfo);
